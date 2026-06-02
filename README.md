@@ -61,6 +61,8 @@ IT業界の実務経験はなくIT開発系の資格もない（基本情報技�
 * Pythonでの開発基盤からさらにステップアップし、Web開発で広く使われるフレームワーク「Ruby on Rails 8」の設計思想（MVCおよびマイグレーションによる規約重視の開発）を取り入れたWebアプリケーションの開発実績です。
 * 前作までの手動ロジック構築から、フレームワークの機能をフル活用した効率的な開発へと移行。Scaffoldによる迅速な雛形生成、確実なデータ管理、さらにフロントエンドには `Fetch API` を組み込んだ非同期通信による、実用性を重視したUI設計を行いました。
 * 最大の課題は、デプロイ先（Render無料枠）における「512MB RAM制限」および「Read-only file system」という環境制約への対応でした。これに対し、アセットをローカル側で事前に処理する**『ローカル・プリコンパイル』**の実施、および動的データを適切なディレクトリへ逃がす**『storage/配備』**の設計を自力で導き出し、制限をクリア。PCと実機（Xiaomi 15T）間での本番環境におけるCRUD同期および外部公開を、数日間の集中開発で安定して実現させました。
+
+[![Readme Card](https://github-readme-stats.vercel.app/api/pin/?username=tosane932&repo=rails-practice&theme=tokyonight)](https://github.com/tosane932/rails-practice)
 ---
 
 ## 🛠️ 開発環境 / 愛機
