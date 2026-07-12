@@ -44,6 +44,9 @@ IT業界の実務経験は一切ございません。高校・専門学校で培
 | **2026/07/02** | Docker/PostgreSQLのマルチコンテナ環境におけるデータ永続化と名前解決の実機検証 | 52日 / 108h| [FlaskとPostgreSQLのマルチコンテナ環境における...](https://qiita.com/tosane932/items/e19ed4a2ffe27f53faf0) |
 | **2026/07/04** | RenderへのFlaskアプリ本番デプロイと環境差分のトラブルシューティング | 54日 / 113h| [【実録】学習113時間のトラックドライバーが...](https://qiita.com/tosane932/items/31bdab8ee2ab8bae2c50) |
 | **2026/07/06** | 運転性格診断アプリ開発（Fisher-Yates法による出題最適化と現場知の言語化） | 56日 / 120h| [なぜ『運転性格診断クイズ』なのに...](https://qiita.com/tosane932/items/220d0f7d36bd79b2aa81) |
+| **2026/07/09** | DPTアプリへのUI改善（ripple/クリックエフェクト）実装中、`isProcessing`フラグの設計意図を現場経験（トイレの点滅ランプ）に接続して言語化 | 59日 / 122h| [🚽トイレの点滅ランプと"isProcessing"フラグが同じだった件](https://qiita.com/tosane932/items/33734f1e963fcb370318) |
+| **2026/07/11** | `sales_data_app`のDockerfileにマルチステージビルドを実装し、Before/Afterのイメージサイズを実測（212MB→209MB、削減はわずか3MBという実測結果を正直に報告） | 60日 / 125h| [マルチステージビルドで積み替えても、3MBしか減らなかった話](https://qiita.com/tosane932/items/c1609f17cddf842f1e7c) |
+| **2026/07/11** | `sales_data_app`にpytest×GitHub Actionsを導入。テスト文字列アサーションの落とし穴（文脈を無視した部分一致）とrequirements.txt反映漏れ（exit code 127）を実機で発見・修正 | 60日 / 125h| [トラックドライバーが「点検ゲート」を作ってみたら、テストの落とし穴にハマった話](https://qiita.com/tosane932/items/b9b6576c1fda3d3a76d2) |
 
 ---
 
@@ -61,8 +64,11 @@ IT業界の実務経験は一切ございません。高校・専門学校で培
 
 ### 3. [sales_data_app](https://github.com/tosane932/sales_data_app) - 【Python / Flask / PostgreSQL / Docker / google-genai】
 * **概要**: 日次の販売数量をデータベースで一元管理し、売上動向の可視化とAI経営コンサルティングを融合させた現場主義のWebアプリケーション。
-* **解決した課題・実装内容**: `openpyxl`によるExcel集計ロジックおよびデッドコード（約200行）をすべて削除し、リレーショナルデータベース（PostgreSQL）を用いた堅牢なシステムへ完全移行。`Flask-SQLAlchemy`を導入し集計処理をDB側へ委譲。`google-genai`SDKを使用した非同期AI連携や、環境変数（`config.py`）による安全管理の強化を実装。
-* **公開記事**: [「🚛学習100時間のトラックドライバーが、自分のFlaskコードの積載ミスを9つ発見して全部直した話📦」](https://qiita.com/tosane932/items/ac18b633c8c87b9807bb)
+* **解決した課題・実装内容**: `openpyxl`によるExcel集計ロジックおよびデッドコード（約200行）をすべて削除し、リレーショナルデータベース（PostgreSQL）を用いた堅牢なシステムへ完全移行。`Flask-SQLAlchemy`を導入し集計処理をDB側へ委譲。`google-genai`SDKを使用した非同期AI連携や、環境変数（`config.py`）による安全管理の強化を実装。さらにDockerfileへマルチステージビルドを導入しBefore/Afterのイメージサイズを実測、続けてpytest×GitHub Actionsによる自動テストゲートを構築し、CI環境での依存関係反映漏れ（`requirements.txt`未記載）等を実機で検証・修正。
+* **公開記事**:
+  * [「🚛学習100時間のトラックドライバーが、自分のFlaskコードの積載ミスを9つ発見して全部直した話📦」](https://qiita.com/tosane932/items/ac18b633c8c87b9807bb)
+  * [「マルチステージビルドで積み替えても、3MBしか減らなかった話」](https://qiita.com/tosane932/items/c1609f17cddf842f1e7c)
+  * [「トラックドライバーが『点検ゲート』を作ってみたら、テストの落とし穴にハマった話」](https://qiita.com/tosane932/items/b9b6576c1fda3d3a76d2)
 
 ### 4. [rails_practice](https://github.com/tosane932/rails_practice) - 【Ruby / Rails 8 / SQLite3 / Render】
 * **概要**: より大規模な開発に対応すべく「Ruby on Rails 8」を採用し、インフラ制約の打開を検証した統合Webアプリケーション。
@@ -76,8 +82,10 @@ IT業界の実務経験は一切ございません。高校・専門学校で培
 
 ### 6. [driver-personality-test](https://github.com/tosane932/driver-personality-test) - 【JavaScript / HTML / CSS】
 * **概要**: 7年7ヶ月のドライバー経験に基づく「現場の危険予知」を診断ツール化した、ブラウザ完結型Webアプリケーション。
-* **解決した課題・実装内容**: Fisher-Yatesアルゴリズムを導入し、診断問題のランダム出題と選択肢の偏りを排除した公正なロジックを実装。特定の技術スタックに依存せず、ブラウザ上で動作する軽量かつ高可用な構成を実現し、物流現場における安全教育ツールとしての実用性を担保。
-* **公開記事**: [「❓️なぜ『運転性格診断クイズ』なのに、これだけ時間をかけたのか」](https://qiita.com/tosane932/items/220d0f7d36bd79b2aa81)
+* **解決した課題・実装内容**: Fisher-Yatesアルゴリズムを導入し、診断問題のランダム出題と選択肢の偏りを排除した公正なロジックを実装。特定の技術スタックに依存せず、ブラウザ上で動作する軽量かつ高可用な構成を実現し、物流現場における安全教育ツールとしての実用性を担保。リリース後もクリック時のripple（波紋）アニメーションを追加実装し、その過程で`isProcessing`フラグによる多重送信防止という防御的プログラミングの設計意図を、現場経験（トイレの点滅ランプ）に接続して言語化。
+* **公開記事**:
+  * [「❓️なぜ『運転性格診断クイズ』なのに、これだけ時間をかけたのか」](https://qiita.com/tosane932/items/220d0f7d36bd79b2aa81)
+  * [「🚽トイレの点滅ランプと"isProcessing"フラグが同じだった件」](https://qiita.com/tosane932/items/33734f1e963fcb370318)
 
 ---
 
