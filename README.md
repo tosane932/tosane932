@@ -100,9 +100,9 @@ Webデザインでは、見た目を整えることだけでなく、**見る人
 | **2026/07/11** | `sales_data_app`のDockerfileをマルチステージビルド化し、イメージサイズを実測。212MBから209MBと削減効果が小さかった理由を、依存ライブラリの構成から分析 | 61日 / 125h | [マルチステージビルドで積み替えても、3MBしか減らなかった話](https://qiita.com/tosane932/items/c1609f17cddf842f1e7c) |
 | **2026/07/11** | `sales_data_app`へpytestとGitHub Actionsを導入し、GitHubへのPush時に自動テストを実行するCI環境を構築。部分一致テストの弱点と`requirements.txt`への依存関係記載漏れを検証・修正 | 61日 / 125h | [トラックドライバーが「点検ゲート」を作ってみたら、テストの落とし穴にハマった話](https://qiita.com/tosane932/items/b9b6576c1fda3d3a76d2) |
 | **2026/07/16** | `sales_data_app`の商品マスタを商品ID基準で安全に更新できる構成へ変更。`is_active`による論理削除、過去売上履歴の保持、Alembicによるマイグレーション、Gemini APIのボタン実行化、Gunicornによる本番起動を実装 | 66日 / 135h | [商品を消しても売上履歴を壊さない。Flaskで論理削除を実装した話](https://qiita.com/tosane932/items/4825452f4bb73fd90ba8) |
-| **2026/07/17** | `puoppo_app`へGoogle OAuthとFlask-Loginを導入。Googleアカウント情報を`users`テーブルへ保存し、ログイン状態の表示、ログアウト、ユーザーごとのデータ管理へ向けた認証基盤を構築 | 67日 / 139h | - |
-| **2026/07/18** | `sales_data_app`の各HTMLに混在していたCSSを`static/style.css`へ分離。`input-page`・`dashboard-page`・`success-page`によるページ別スコープを設定し、共通CSSの影響でダッシュボードのボタンが崩れた問題も修正 | 68日 / 141h | （Qiita記事公開予定） |
-| **2026/07/19** | 元お好み焼き職人・商売人としての店長目線から、`sales_data_app`のUIを再点検。「保存」と「更新」の文言差、未来年の表示、現在の登録数が見えない問題、画面間導線の不足を改善。操作別の配色を固定し、老若男女が迷いにくいUIへリファクタリング | 69日 / 143h | （Qiita記事公開予定） |
+| **2026/07/17** | `puoppo_app`へGoogle OAuthとFlask-Loginを導入。Googleアカウント情報を`users`テーブルへ保存し、ログイン状態の表示、ログアウト、ユーザーごとのデータ管理へ向けた認証基盤を構築 | 67日 / 138h | - |
+| **2026/07/18** | `sales_data_app`の各HTMLに混在していたCSSを`static/style.css`へ分離。`input-page`・`dashboard-page`・`success-page`によるページ別スコープを設定し、共通CSSの影響でダッシュボードのボタンが崩れた問題も修正 | 68日 / 143h | （Qiita記事公開予定） |
+| **2026/07/18** | 元お好み焼き職人・商売人としての店長目線から、`sales_data_app`のUIを再点検。「保存」と「更新」の文言差、未来年の表示、現在の登録数が見えない問題、画面間導線の不足を改善。操作別の配色を固定し、老若男女が迷いにくいUIへリファクタリング | 68日 / 143h | （Qiita記事公開予定） |
 
 ---
 
