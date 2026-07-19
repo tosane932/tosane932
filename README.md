@@ -105,7 +105,7 @@ Webデザインでは、見た目を整えることだけでなく、**見る人
 | **2026/07/17** | `puoppo_app`へGoogle OAuthとFlask-Loginを導入。Googleアカウント情報を`users`テーブルへ保存し、ログイン状態の表示、ログアウト、ユーザーごとのデータ管理へ向けた認証基盤を構築 | 67日 / 138h | - |
 | **2026/07/18** | `sales_data_app`の各HTMLに混在していたCSSを`static/style.css`へ分離。`input-page`・`dashboard-page`・`success-page`によるページ別スコープを設定し、共通CSSの影響でダッシュボードのボタンが崩れた問題も修正 | 68日 / 143h | [「保存」と「更新」は違う。元お好み焼き職人が店長目線でFlaskアプリの迷うUIを潰した話](https://qiita.com/tosane932/items/245152c844261e615641) |
 | **2026/07/18** | 元お好み焼き職人・商売人としての店長目線から、`sales_data_app`のUIを再点検。「保存」と「更新」の文言差、未来年の表示、現在の登録数が見えない問題、画面間導線の不足を改善。操作別の配色を固定し、老若男女が迷いにくいUIへリファクタリング | 68日 / 143h | [「保存」と「更新」は違う。元お好み焼き職人が店長目線でFlaskアプリの迷うUIを潰した話](https://qiita.com/tosane932/items/245152c844261e615641) |
-| **2026/07/19** | `sales_data_app`のリポジトリ全体を総点検。デモ動画・サムネイル・スクリーンショットを用途別に整理し、READMEの画像パスを更新。`.gitignore`・`.dockerignore`を見直し、旧Excel処理、未使用import、不要依存関係、未使用CSS、古い画面文言を削除。旧仕様と競合記号の残存確認、pytest 3件成功、GitHub同期・working tree cleanまで確認 | 69日 / 148h | - |
+| **2026/07/19** | `sales_data_app`のリポジトリ全体を総点検。デモ動画・サムネイル・スクリーンショットを用途別に整理し、READMEの画像パスを更新。`.gitignore`・`.dockerignore`を見直し、旧Excel処理、未使用import、不要依存関係、未使用CSS、古い画面文言を削除。旧仕様と競合記号の残存確認、pytest 3件成功、GitHub同期・working tree cleanまで確認 | 69日 / 148h | [🚛 動いているFlaskアプリを5時間総点検――コード・README・Docker・Gitを「現在の仕様」に揃える方法](https://qiita.com/tosane932/items/02de476fad8f0c1261e0) |
 
 ---
 
