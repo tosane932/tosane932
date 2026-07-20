@@ -111,7 +111,7 @@ Webデザインでは、見た目を整えることだけでなく、**見る人
 
 ## ⚡ 開発実績・リポジトリ一覧
 
-### 1. [sales_data_app](https://github.com/tosane932/sales_data_app)
+### 1. [🍞sales_data_app](https://github.com/tosane932/sales_data_app)
 
 【Python / Flask / PostgreSQL / Docker / Gemini API】
 
@@ -156,7 +156,7 @@ Webデザインでは、見た目を整えることだけでなく、**見る人
 
 ---
 
-### 2. [puoppo_app](https://github.com/tosane932/puoppo_app)
+### 2. [🕊puoppo_app](https://github.com/tosane932/puoppo_app)
 
 【Python / Flask / SQLite3 / Gemini API / Google OAuth / Docker】
 
@@ -181,7 +181,7 @@ Webデザインでは、見た目を整えることだけでなく、**見る人
 
 ---
 
-### 3. [driver-personality-test](https://github.com/tosane932/driver-personality-test)
+### 3. [🚛driver-personality-test](https://github.com/tosane932/driver-personality-test)
 
 【JavaScript / HTML / CSS / sql.js】
 
