@@ -109,7 +109,7 @@ Webデザインでは、見た目を整えることだけでなく、**見る人
 | **2026/07/18** | `sales_data_app`の各HTMLに混在していたCSSを`static/style.css`へ分離。`input-page`・`dashboard-page`・`success-page`によるページ別スコープを設定し、共通CSSの影響でダッシュボードのボタンが崩れた問題も修正 | 68日 / 143h | [「保存」と「更新」は違う。元お好み焼き職人が店長目線でFlaskアプリの迷うUIを潰した話](https://qiita.com/tosane932/items/245152c844261e615641) |
 | **2026/07/18** | 元お好み焼き職人・商売人としての店長目線から、`sales_data_app`のUIを再点検。「保存」と「更新」の文言差、未来年の表示、現在の登録数が見えない問題、画面間導線の不足を改善。操作別の配色を固定し、老若男女が迷いにくいUIへリファクタリング | 68日 / 143h | [「保存」と「更新」は違う。元お好み焼き職人が店長目線でFlaskアプリの迷うUIを潰した話](https://qiita.com/tosane932/items/245152c844261e615641) |
 | **2026/07/19** | `sales_data_app`のリポジトリ全体を総点検。デモ動画・サムネイル・スクリーンショットを用途別に整理し、READMEの画像パスを更新。`.gitignore`・`.dockerignore`を見直し、旧Excel処理、未使用import、不要依存関係、未使用CSS、古い画面文言を削除。旧仕様と競合記号の残存確認、pytest 3件成功、GitHub同期・working tree cleanまで確認 | 69日 / 148h | [🚛 動いているFlaskアプリを5時間総点検――コード・README・Docker・Gitを「現在の仕様」に揃える方法](https://qiita.com/tosane932/items/02de476fad8f0c1261e0) |
-| **2026/08/02** | VS Code版Codexを「現場を知らない他部署から来たベテラン点検員」と位置づけ、`sales_data_app`を読み取り専用で静的レビュー。セキュリティ・保守性・テスト・READMEとの整合性など18件の改善候補を抽出し、事実・推測・再現条件・影響範囲を再確認。修正対象を動的ランキング表示の保存型XSS対策1件に限定し、`innerHTML`による文字列生成をDOM APIと`textContent`へ変更。`git diff`で変更範囲を確認したうえで、ローカル環境とRender公開環境の両方で、HTMLタグや記号を含む商品名の登録・売上入力・ランキング・グラフ表示を検証 | 83日 / 152h | [🔨47秒でXSS修正！？VS Code版Codexを「他部署から来たベテラン点検員」として使ってみた](Qiita記事のURL) |
+| **2026/08/02** | VS Code版Codexを「現場を知らない他部署から来たベテラン点検員」と位置づけ、`sales_data_app`を読み取り専用で静的レビュー。セキュリティ・保守性・テスト・READMEとの整合性など18件の改善候補を抽出し、事実・推測・再現条件・影響範囲を再確認。修正対象を動的ランキング表示の保存型XSS対策1件に限定し、`innerHTML`による文字列生成をDOM APIと`textContent`へ変更。`git diff`で変更範囲を確認したうえで、ローカル環境とRender公開環境の両方で、HTMLタグや記号を含む商品名の登録・売上入力・ランキング・グラフ表示を検証 | 83日 / 152h | [🔨47秒でXSS修正！？VS Code版Codexを「他部署から来たベテラン点検員」として使ってみた](https://qiita.com/tosane932/items/95f998ff98c4ac2ec5d9) |
 
 ---
 
@@ -162,7 +162,7 @@ Webデザインでは、見た目を整えることだけでなく、**見る人
   - [「🚛学習100時間のトラックドライバーが、自分のFlaskコードの積載ミスを9つ発見して全部直した話📦」](https://qiita.com/tosane932/items/ac18b633c8c87b9807bb)
   - [「マルチステージビルドで積み替えても、3MBしか減らなかった話」](https://qiita.com/tosane932/items/c1609f17cddf842f1e7c)
   - [「トラックドライバーが『点検ゲート』を作ってみたら、テストの落とし穴にハマった話」](https://qiita.com/tosane932/items/b9b6576c1fda3d3a76d2)
-  - [「🔨47秒でXSS修正！？VS Code版Codexを『他部署から来たベテラン点検員』として使ってみた」](Qiita記事のURL)
+  - [「🔨47秒でXSS修正！？VS Code版Codexを『他部署から来たベテラン点検員』として使ってみた」](https://qiita.com/tosane932/items/95f998ff98c4ac2ec5d9)
 
 ---
 
