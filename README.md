@@ -6,23 +6,20 @@
 
 IT業界での実務経験はありませんが、2026年5月より、本業の大型・中型トラックドライバーを続けながら、PythonおよびRuby on Railsを用いたWebアプリケーション開発を独学で開始しました。
 
-学習開始から約3か月・累計155時間の段階で、以下の開発・運用を経験しています。
+学習開始から約3か月・累計167時間の段階で、以下の開発・運用を経験しています。
 
 - Python / Flaskを用いたWebアプリケーション開発
 - PostgreSQL / SQLAlchemy / Alembicによるデータベース設計・変更管理
-- 欠落していた初期マイグレーションの調査・修復と、空DB・既存DB複製環境の両経路による安全性検証
 - Docker / Docker Composeによる開発環境構築
 - pytest / GitHub Actionsによる自動テストとCI
+- pytestを3件から51件へ拡充し、入力値検証・DB整合性・rollback・履歴保持・ダッシュボード集計まで回帰テスト化
+- `(product_id, date)`のDB一意制約追加と、隔離PostgreSQL環境でのupgrade / downgrade検証
 - Gunicorn / Renderによる本番公開
 - Gemini APIを利用したAI機能の実装
 - Google OAuth / Flask-Loginによる認証機能の実装
 - JavaScriptによるブラウザ完結型Webアプリケーション開発
-- HTML内のCSSを外部ファイルへ分離したUIリファクタリング
-- `.gitignore`・`.dockerignore`・README・画像資料・不要コードを含むリポジトリ全体の保守整理
-- ユーザー視点による文言・配色・画面導線・入力状態表示の改善
 - VS Code版Codexを用いた、事実と推測を分けたリポジトリ全体の静的レビュー
-- JavaScriptの`innerHTML`による保存型XSSリスクを、DOM APIと`textContent`を用いて修正し、ローカル環境とRender公開環境で検証
-- Codexへ変更範囲・禁止事項・停止条件を段階ごとに指定し、初期マイグレーションの設計、実装、空DB構築、既存DB複製環境での回帰検証を実施
+- Codexへ変更範囲・禁止事項・停止条件を段階ごとに指定し、小さな単位で修正・検証する運用
 - 開発過程・失敗・設計判断のQiitaおよびGitHubへの継続的な記録
 
 Webデザインでは、見た目を整えることだけでなく、**見る人の視線の流れ、情報の優先順位、ボタン配置、操作手順の分かりやすさ**を意識しています。
@@ -90,6 +87,11 @@ Webデザインでは、見た目を整えることだけでなく、**見る人
 
 また、動作するコードを作るだけでなく、利用者がどのように受け取るか、誤操作や勘違いが起きないかまで検証し、定期的なコード・UI・READMEのリファクタリングを自身の「技術資産」として記録しています。
 
+<details>
+<summary><strong>📖 開発履歴を表示する</strong></summary>
+
+<br>
+
 | 日付 | マイルストーン・実装内容 | 累計学習 | 関連Qiita記事 |
 | :--- | :--- | :--- | :--- |
 | **2026/05/12** | Pythonを中心とした本格的なシステム開発学習を開始。自動化プログラムとWebアプリケーションの設計・実装に着手 | - | - |
@@ -97,22 +99,25 @@ Webデザインでは、見た目を整えることだけでなく、**見る人
 | **2026/06/02** | Ruby on Rails 8を用いたWebアプリケーションをRenderへ本番公開。無料クラウド環境のメモリ・ファイルシステム制約を調査し、ローカルプリコンパイルと永続ディスクによる代替案を検証 | 22日 / 81h | [Render無料枠の制限を回避したRails 8のデプロイ検証](https://qiita.com/tosane932/items/58e00fc7353ef76b4a62) |
 | **2026/06/03** | Pythonで事前に外部データを取得・整形し、JSONファイルとして静的サイトへ供給する「データ出荷型」構成を実装。画面表示時の通信待ちを抑える設計を検証 | 23日 / 86h | [Python学習開始24日目の記録...](https://qiita.com/tosane932/items/a227899ee58d68020c21) |
 | **2026/06/18** | 過去のREADME・学習記録・技術記事を全面的に見直し。感情中心の記述から、現象・原因・判断・結果を区別した事実ベースの技術ドキュメントへ再構成 | 38日 / 93h | [過去の学習記録を『リファクタリング』する...](https://qiita.com/tosane932/items/3d05208f519db621efef) |
-| **2026/06/24** | `sales_data_app`のデータ保存先をSQLiteからPostgreSQLへ移行。ローカル環境だけでなく、本番環境での継続運用を想定したデータベース構成へ発展 | 44日 / 98h | - |
-| **2026/06/28** | `sales_data_app`のコード全体を再点検し、重複処理・不要コード・例外処理不足など9件の問題を発見・修正。動作しているコードでも継続的な点検が必要であることを実機で確認 | 48日 / 100h | [学習100時間のトラックドライバーが...](https://qiita.com/tosane932/items/ac18b633c8c87b9807bb) |
-| **2026/06/30** | `sales_data_app`をDocker化し、`docker compose up --build`でFlaskとPostgreSQLをまとめて起動できる再現可能な開発環境を構築 | 50日 / 104h | - |
-| **2026/07/02** | Docker上のFlaskコンテナとPostgreSQLコンテナを連携。コンテナ名による名前解決、ボリュームによるデータ永続化、ローカル環境との差異を実機で検証 | 52日 / 108h | [FlaskとPostgreSQLのマルチコンテナ環境における...](https://qiita.com/tosane932/items/e19ed4a2ffe27f53faf0) |
-| **2026/07/04** | `sales_data_app`をRenderへ本番デプロイ。ローカルでは発生しなかった環境変数・データベース接続・起動処理の差異を切り分け、本番環境で動作する構成へ修正 | 54日 / 113h | [【実録】学習113時間のトラックドライバーが...](https://qiita.com/tosane932/items/31bdab8ee2ab8bae2c50) |
-| **2026/07/06** | 7年7か月の物流現場経験をもとに、全50問の運転性格診断アプリを開発。Fisher-Yates法による出題・選択肢のランダム化と、5段階の傾斜配点による診断ロジックを実装 | 56日 / 120h | [なぜ『運転性格診断クイズ』なのに...](https://qiita.com/tosane932/items/220d0f7d36bd79b2aa81) |
-| **2026/07/09** | 運転性格診断アプリへrippleアニメーションと多重操作防止処理を追加。`isProcessing`フラグの役割を、利用者へ処理状態を伝える現場の表示装置と結びつけて言語化 | 59日 / 122h | [🚽トイレの点滅ランプと"isProcessing"フラグが同じだった件](https://qiita.com/tosane932/items/33734f1e963fcb370318) |
-| **2026/07/11** | `sales_data_app`のDockerfileをマルチステージビルド化し、イメージサイズを実測。212MBから209MBと削減効果が小さかった理由を、依存ライブラリの構成から分析 | 61日 / 125h | [マルチステージビルドで積み替えても、3MBしか減らなかった話](https://qiita.com/tosane932/items/c1609f17cddf842f1e7c) |
-| **2026/07/11** | `sales_data_app`へpytestとGitHub Actionsを導入し、GitHubへのPush時に自動テストを実行するCI環境を構築。部分一致テストの弱点と`requirements.txt`への依存関係記載漏れを検証・修正 | 61日 / 125h | [トラックドライバーが「点検ゲート」を作ってみたら、テストの落とし穴にハマった話](https://qiita.com/tosane932/items/b9b6576c1fda3d3a76d2) |
-| **2026/07/16** | `sales_data_app`の商品マスタを商品ID基準で安全に更新できる構成へ変更。`is_active`による論理削除、過去売上履歴の保持、Alembicによるマイグレーション、Gemini APIのボタン実行化、Gunicornによる本番起動を実装 | 66日 / 135h | [売上履歴を壊さず商品を販売終了にしたい――Flaskで論理削除とGemini API節約を実装した記録](https://qiita.com/tosane932/items/4825452f4bb73fd90ba8) |
-| **2026/07/17** | `puoppo_app`へGoogle OAuthとFlask-Loginを導入。Googleアカウント情報を`users`テーブルへ保存し、ログイン状態の表示、ログアウト、ユーザーごとのデータ管理へ向けた認証基盤を構築 | 67日 / 138h | - |
-| **2026/07/18** | `sales_data_app`の各HTMLに混在していたCSSを`static/style.css`へ分離。`input-page`・`dashboard-page`・`success-page`によるページ別スコープを設定し、共通CSSの影響でダッシュボードのボタンが崩れた問題も修正 | 68日 / 143h | [「保存」と「更新」は違う。元お好み焼き職人が店長目線でFlaskアプリの迷うUIを潰した話](https://qiita.com/tosane932/items/245152c844261e615641) |
-| **2026/07/18** | 元お好み焼き職人・商売人としての店長目線から、`sales_data_app`のUIを再点検。「保存」と「更新」の文言差、未来年の表示、現在の登録数が見えない問題、画面間導線の不足を改善。操作別の配色を固定し、老若男女が迷いにくいUIへリファクタリング | 68日 / 143h | [「保存」と「更新」は違う。元お好み焼き職人が店長目線でFlaskアプリの迷うUIを潰した話](https://qiita.com/tosane932/items/245152c844261e615641) |
-| **2026/07/19** | `sales_data_app`のリポジトリ全体を総点検。デモ動画・サムネイル・スクリーンショットを用途別に整理し、READMEの画像パスを更新。`.gitignore`・`.dockerignore`を見直し、旧Excel処理、未使用import、不要依存関係、未使用CSS、古い画面文言を削除。旧仕様と競合記号の残存確認、pytest 3件成功、GitHub同期・working tree cleanまで確認 | 69日 / 148h | [🚛 動いているFlaskアプリを5時間総点検――コード・README・Docker・Gitを「現在の仕様」に揃える方法](https://qiita.com/tosane932/items/02de476fad8f0c1261e0) |
-| **2026/08/02** | VS Code版Codexを「現場を知らない他部署から来たベテラン点検員」と位置づけ、`sales_data_app`を読み取り専用で静的レビュー。セキュリティ・保守性・テスト・READMEとの整合性など18件の改善候補を抽出し、事実・推測・再現条件・影響範囲を再確認。修正対象を動的ランキング表示の保存型XSS対策1件に限定し、`innerHTML`による文字列生成をDOM APIと`textContent`へ変更。`git diff`で変更範囲を確認したうえで、ローカル環境とRender公開環境の両方で、HTMLタグや記号を含む商品名の登録・売上入力・ランキング・グラフ表示を検証 | 83日 / 152h | [🔨47秒でXSS修正！？VS Code版Codexを「他部署から来たベテラン点検員」として使ってみた](https://qiita.com/tosane932/items/95f998ff98c4ac2ec5d9) |
-| **2026/08/06** | `sales_data_app`のマイグレーション履歴を再点検し、最初のrevisionがテーブル作成ではなく、存在することを前提とした`products.is_active`の追加処理から始まっている問題を確認。`products`と`daily_sales`を作成する基礎revisionを履歴の先頭へ追加し、既存revisionを接続。通常環境と別のComposeプロジェクトを用いて、完全な空DBからの構築、Gunicorn起動、HTTP 200を確認。さらに、通常DBを読み取り専用で`pg_dump`し、分離した複製DBへ復元して`flask db upgrade`を実行。適用済みDBでは基礎revisionが再実行されず、revision・スキーマ・制約・インデックス・シーケンス・全データが変化しないことを検証 | 87日 / 155h | [Flask-Migrate導入後の空DBで「テーブルが存在しない」と失敗した原因と、初期マイグレーションを修復した記録](https://qiita.com/tosane932/items/13c2ca0e17716594aa1e) |
+| **2026/06/24** | `sales_data_app`のデータ保存先をSQLiteからPostgreSQLへ移行 | 44日 / 98h | - |
+| **2026/06/28** | `sales_data_app`のコード全体を再点検し、重複処理・不要コード・例外処理不足など9件の問題を発見・修正 | 48日 / 100h | [学習100時間のトラックドライバーが...](https://qiita.com/tosane932/items/ac18b633c8c87b9807bb) |
+| **2026/06/30** | `sales_data_app`をDocker化し、FlaskとPostgreSQLをまとめて起動できる再現可能な開発環境を構築 | 50日 / 104h | - |
+| **2026/07/02** | Docker上のFlaskコンテナとPostgreSQLコンテナを連携し、名前解決・ボリューム・ローカルとの差異を検証 | 52日 / 108h | [FlaskとPostgreSQLのマルチコンテナ環境における...](https://qiita.com/tosane932/items/e19ed4a2ffe27f53faf0) |
+| **2026/07/04** | `sales_data_app`をRenderへ本番デプロイ。環境変数・DB接続・起動処理の差異を切り分けて修正 | 54日 / 113h | [【実録】学習113時間のトラックドライバーが...](https://qiita.com/tosane932/items/31bdab8ee2ab8bae2c50) |
+| **2026/07/06** | 全50問の運転性格診断アプリを開発。Fisher-Yates法と5段階傾斜配点を実装 | 56日 / 120h | [なぜ『運転性格診断クイズ』なのに...](https://qiita.com/tosane932/items/220d0f7d36bd79b2aa81) |
+| **2026/07/09** | 運転性格診断アプリへrippleアニメーションと多重操作防止処理を追加 | 59日 / 122h | [🚽トイレの点滅ランプと"isProcessing"フラグが同じだった件](https://qiita.com/tosane932/items/33734f1e963fcb370318) |
+| **2026/07/11** | Dockerfileをマルチステージビルド化し、イメージサイズを実測 | 61日 / 125h | [マルチステージビルドで積み替えても、3MBしか減らなかった話](https://qiita.com/tosane932/items/c1609f17cddf842f1e7c) |
+| **2026/07/11** | pytestとGitHub Actionsを導入し、GitHubへのPush時に自動テストを実行するCI環境を構築 | 61日 / 125h | [トラックドライバーが「点検ゲート」を作ってみたら、テストの落とし穴にハマった話](https://qiita.com/tosane932/items/b9b6576c1fda3d3a76d2) |
+| **2026/07/16** | `is_active`による論理削除、過去売上履歴保持、Alembic、Gemini APIのボタン実行化、Gunicorn本番起動を実装 | 66日 / 135h | [売上履歴を壊さず商品を販売終了にしたい――Flaskで論理削除とGemini API節約を実装した記録](https://qiita.com/tosane932/items/4825452f4bb73fd90ba8) |
+| **2026/07/17** | `puoppo_app`へGoogle OAuthとFlask-Loginを導入 | 67日 / 138h | - |
+| **2026/07/18** | CSSを`static/style.css`へ分離し、ページ別スコープを設定 | 68日 / 143h | [「保存」と「更新」は違う。元お好み焼き職人が店長目線でFlaskアプリの迷うUIを潰した話](https://qiita.com/tosane932/items/245152c844261e615641) |
+| **2026/07/18** | 店長目線で文言・配色・未来年表示・登録状態・画面導線を改善 | 68日 / 143h | [「保存」と「更新」は違う。元お好み焼き職人が店長目線でFlaskアプリの迷うUIを潰した話](https://qiita.com/tosane932/items/245152c844261e615641) |
+| **2026/07/19** | `sales_data_app`のリポジトリ全体を5時間総点検し、不要コード・画像資料・README・ignore設定などを整理 | 69日 / 148h | [🚛 動いているFlaskアプリを5時間総点検――コード・README・Docker・Gitを「現在の仕様」に揃える方法](https://qiita.com/tosane932/items/02de476fad8f0c1261e0) |
+| **2026/08/02** | VS Code版Codexで`静的レビュー`を実施。18件の改善候補を抽出し、最初に動的ランキングの保存型XSSを修正 | 83日 / 152h | [🔨47秒でXSS修正！？VS Code版Codexを「他部署から来たベテラン点検員」として使ってみた](https://qiita.com/tosane932/items/95f998ff98c4ac2ec5d9) |
+| **2026/08/06** | 欠落していた初期マイグレーションを修復し、空DB構築と既存DB複製環境の両経路を検証 | 87日 / 155h | [Flask-Migrate導入後の空DBで「テーブルが存在しない」と失敗した原因と、初期マイグレーションを修復した記録](https://qiita.com/tosane932/items/13c2ca0e17716594aa1e) |
+| **2026/08/10** | pytest強化を第2段階まで実施。3件→9件→51件へ拡充し、売上POST・商品POST・DB一意制約・rollback・履歴保持・dashboard APIを回帰テスト化。AI返答表示も`innerHTML`から`innerText`へ変更 | 91日 / 167h | [Qiitaで最新の開発記録を公開](https://qiita.com/tosane932) |
+
+</details>
 
 ---
 
@@ -125,54 +130,73 @@ Webデザインでは、見た目を整えることだけでなく、**見る人
 - **オンラインデモ**: [ベーカリー売上管理システムをブラウザで体験する](https://bakery-salesdata.onrender.com/)
 - **概要**: 商品マスタ、日次売上入力、売上分析、AIによる経営アドバイスを一元化した、ベーカリー向けWebアプリケーション
 - **コンセプト**: 元お好み焼き職人としての店舗運営経験とWebデザインの知識を生かし、老若男女が迷わず使える売上管理システムを設計
-- **現場課題**:
-  - 日々の販売数量と商品情報を継続的に管理する
-  - 販売終了後も過去の売上履歴を失わず分析する
-  - 同じ日の売上を再入力した際の加算・上書きの誤解を防ぐ
-  - 利用者が現在の登録状態を確認できるようにする
-  - 店舗業務の流れに沿って各画面へ移動できるようにする
-- **設計・実装内容**:
-  - SQLiteからPostgreSQLへの移行
-  - SQLAlchemyによるデータ管理
-  - `is_active`を用いた論理削除と過去データの保持
-  - Flask-Migrate / AlembicによるDBマイグレーション
-  - 欠落していた初期テーブル作成履歴を調査し、`products`と`daily_sales`を作成する基礎revisionを追加
-  - 既存の`is_active`追加revisionを基礎revisionへ接続し、空DBからheadまで到達できる履歴へ修復
-  - 通常環境とは異なるComposeプロジェクト名を使用し、コンテナ・ネットワーク・PostgreSQLボリュームを分離した空DB検証を実施
-  - 空DBからの`flask db upgrade`、Gunicorn起動、HTTP 200、列・主キー・外部キー・DBデフォルトを確認
-  - 既存DBを読み取り専用で`pg_dump`し、分離した複製DBへ復元して適用済みDBのupgrade経路を検証
-  - upgrade前後でrevision・スキーマ・制約・インデックス・シーケンス・全行データが変化しないことを確認
-  - Docker / Docker Composeによる環境構築
-  - Gunicorn / Renderによる本番公開
-  - pytest / GitHub Actionsによる自動テスト
-  - Gemini APIの429・503を区別したエラーハンドリング
-  - APIを必要時のみ実行し、表示速度とAPI利用回数を考慮した設計
-  - HTML内のCSSを`static/style.css`へ分離
-  - ページ専用クラスによるCSSの影響範囲制御
-  - スマートフォン向けレスポンシブデザイン
-  - デモ動画・サムネイル・スクリーンショットの用途別フォルダ整理
-  - `.gitignore`・`.dockerignore`による機密情報・ローカルデータ・開発資料の除外
-  - VS Code版Codexによるリポジトリ全体の読み取り専用静的レビュー
-  - セキュリティ・保守性・テスト不足・READMEとの不一致を、事実と推測に分けて点検
-  - 動的ランキング表示で使用していた`innerHTML`を廃止し、DOM APIと`textContent`による安全な表示処理へ変更
-  - HTMLタグや`<`・`>`・`&`を含む商品名を、HTMLとして解釈せず文字列として表示
-  - ローカル環境とRender公開環境の別DBで、商品登録・売上入力・ランキング・グラフ表示を実機確認
-- **ユーザー視点によるUI改善**:
-  - 不要な未来年の選択肢を削除
-  - 「保存する」を「本日の売上個数を更新する」へ変更
-  - 商品ごとに「本日の登録済み個数」を表示
-  - 入力欄へデータベースの現在値を初期表示
-  - 商品ごとの余白と区切り線を追加
-  - トップ・日次入力・売上分析間の画面導線を改善
-  - 商品登録・日次入力・売上分析・AI・戻る操作の配色を統一
-  - 色だけでなく、アイコンと具体的な文言を併用
-- **改善過程**: `openpyxl`によるExcel集計ロジックと不要コード約200行を削除し、データベース中心の構成へ段階的に再設計。さらに旧Excel設定・未使用import・不要依存関係・未使用CSS・古い画面文言を再点検して削除し、画像資料、README、`.gitignore`、`.dockerignore`まで含めてリポジトリ全体を整理。公開後に発生した環境差分、依存関係、CSSの影響範囲、UI上の誤解リスクも記録し、Qiitaで公開。VS Code版Codexによる静的レビューでは18件の改善候補を抽出し、結果をそのまま採用せず、再現条件・実害・業務仕様・影響範囲を再確認。最初の修正を動的ランキング表示の保存型XSS対策1件に限定し、ローカル環境とRender公開環境の両方で検証してから出荷。続いて、空DBでは初期構築できないマイグレーション履歴の欠落を調査し、基礎revisionを追加。空DBでの新規構築と、既存DBを複製した環境での無変更upgradeを別々に検証し、通常DBへマイグレーションを実行せずに安全性を確認してからコミット・push
-- **公開記事**:
-  - [「🚛学習100時間のトラックドライバーが、自分のFlaskコードの積載ミスを9つ発見して全部直した話📦」](https://qiita.com/tosane932/items/ac18b633c8c87b9807bb)
-  - [「マルチステージビルドで積み替えても、3MBしか減らなかった話」](https://qiita.com/tosane932/items/c1609f17cddf842f1e7c)
-  - [「トラックドライバーが『点検ゲート』を作ってみたら、テストの落とし穴にハマった話」](https://qiita.com/tosane932/items/b9b6576c1fda3d3a76d2)
-  - [「🔨47秒でXSS修正！？VS Code版Codexを『他部署から来たベテラン点検員』として使ってみた」](https://qiita.com/tosane932/items/95f998ff98c4ac2ec5d9)
-  - [Flask-Migrate導入後の空DBで「テーブルが存在しない」と失敗した原因と、初期マイグレーションを修復した記録](https://qiita.com/tosane932/items/13c2ca0e17716594aa1e)
+
+### 主な設計・実装
+
+- SQLiteからPostgreSQLへの移行
+- SQLAlchemyによるデータ管理
+- `is_active`を用いた論理削除と過去データの保持
+- Flask-Migrate / AlembicによるDBマイグレーション
+- Docker / Docker Composeによる環境構築
+- Gunicorn / Renderによる本番公開
+- pytest / GitHub Actionsによる自動テスト
+- Gemini APIの429・503を区別したエラーハンドリング
+- VS Code版Codexによる静的レビュー
+- 保存型XSS対策
+- UI文言・配色・導線の改善
+
+<details>
+<summary><strong>🔧 sales_data_app の詳細な実装・検証内容を表示する</strong></summary>
+
+<br>
+
+- 欠落していた初期テーブル作成履歴を調査し、`products`と`daily_sales`を作成する基礎revisionを追加
+- 既存の`is_active`追加revisionを基礎revisionへ接続し、空DBからheadまで到達できる履歴へ修復
+- `DailySales(product_id, date)`へ一意制約を追加し、同一商品・同一日の重複をDB側でも拒否
+- 通常環境とは異なるComposeプロジェクト名を使用し、コンテナ・ネットワーク・PostgreSQLボリュームを分離
+- 空DBから`flask db upgrade`、Gunicorn起動、HTTP 200を確認
+- 既存DBを読み取り専用で`pg_dump`し、分離した複製DBへ復元してupgrade経路を検証
+- 一意制約追加migrationを隔離PostgreSQL環境でupgrade / downgrade / 再upgradeし、既存データが変化しないことを確認
+- pytestを51件まで拡充
+- 売上POSTの日付・数量・配列長・商品IDをDB変更前に全件検証
+- 不正な売上リクエストをHTTP 400で拒否
+- 売上対象商品の存在・対象年月・販売状態を検証
+- 商品POSTの配列長・商品ID・対象年月・重複ID・価格・年月を事前検証
+- 不正入力時にProduct / DailySalesが変更されないことを確認
+- 売上POST・商品POSTの`commit()`失敗時に`rollback()`
+- 論理削除後もProduct IDと過去DailySalesを保持
+- 既存Product ID再送信時に同じ行を再有効化する挙動をテスト化
+- `/api/dashboard-data`で年月別集計・ランキング・グラフ値・inactive商品の過去履歴・全期間集計を検証
+- 動的ランキング表示の`innerHTML`を廃止し、DOM APIと`textContent`へ変更
+- AI返答表示の`innerHTML`を`innerText`へ変更
+- XSS回帰テストでHTML風文字列が要素として解釈されないことを確認
+- HTML内のCSSを`static/style.css`へ分離
+- ページ専用クラスによるCSSの影響範囲制御
+- スマートフォン向けレスポンシブデザイン
+- `.gitignore`・`.dockerignore`による機密情報・ローカルデータ・開発資料の除外
+- ローカル環境とRender公開環境の別DBで、商品登録・売上入力・ランキング・グラフ表示を実機確認
+
+</details>
+
+### ユーザー視点によるUI改善
+
+- 不要な未来年の選択肢を削除
+- 「保存する」を「本日の売上個数を更新する」へ変更
+- 商品ごとに「本日の登録済み個数」を表示
+- 入力欄へデータベースの現在値を初期表示
+- 商品ごとの余白と区切り線を追加
+- トップ・日次入力・売上分析間の画面導線を改善
+- 商品登録・日次入力・売上分析・AI・戻る操作の配色を統一
+- 色だけでなく、アイコンと具体的な文言を併用
+
+### 公開記事
+
+- [「🚛学習100時間のトラックドライバーが、自分のFlaskコードの積載ミスを9つ発見して全部直した話📦」](https://qiita.com/tosane932/items/ac18b633c8c87b9807bb)
+- [「マルチステージビルドで積み替えても、3MBしか減らなかった話」](https://qiita.com/tosane932/items/c1609f17cddf842f1e7c)
+- [「トラックドライバーが『点検ゲート』を作ってみたら、テストの落とし穴にハマった話」](https://qiita.com/tosane932/items/b9b6576c1fda3d3a76d2)
+- [「🔨47秒でXSS修正！？VS Code版Codexを『他部署から来たベテラン点検員』として使ってみた」](https://qiita.com/tosane932/items/95f998ff98c4ac2ec5d9)
+- [Flask-Migrate導入後の空DBで「テーブルが存在しない」と失敗した原因と、初期マイグレーションを修復した記録](https://qiita.com/tosane932/items/13c2ca0e17716594aa1e)
+- [最新のpytest強化・Codex運用・XSS対策記事はQiitaプロフィールから確認できます](https://qiita.com/tosane932)
 
 ---
 
@@ -182,21 +206,9 @@ Webデザインでは、見た目を整えることだけでなく、**見る人
 
 - **オンラインデモ**: [Puoppoをブラウザで体験する](https://puoppo.onrender.com/)
 - **概要**: 公式RSSから関連記事を収集し、Gemini APIで要約・分析するWebアプリケーション
-- **解決した課題・設計判断**: Webサイトからの直接取得が安定しなかったため、制限を無理に突破するのではなく、公式RSSを利用する安全で継続可能な取得方式へ変更
-- **UI設計**: 検索から結果表示までをシンプルな1カラムで構成し、利用者が迷いにくい操作動線を設計
-- **認証機能**:
-  - AuthlibによるGoogle OAuth認証
-  - Flask-Loginによるログイン状態管理
-  - Googleアカウント情報の`users`テーブル保存
-  - ログイン中ユーザーのプロフィール画像・名前表示
-  - ログアウト機能
-  - 将来のユーザー別分析履歴・お気に入り機能に向けた基盤構築
-- **実装内容**: Flask、SQLite3、Gemini API、Google OAuth、Docker、Renderを組み合わせて構築
-- **今後の課題**:
-  - 分析履歴への`user_id`追加
-  - ログインユーザーごとの履歴分離
-  - 未ログイン時のアクセス制御
-  - 削除操作の所有者確認
+- **設計判断**: Webサイトからの直接取得が安定しなかったため、公式RSSを利用する安全で継続可能な取得方式へ変更
+- **認証**: Google OAuth / Flask-Login
+- **今後の課題**: ユーザー別履歴分離、所有者確認、未ログイン時のアクセス制御
 - **公開記事**: [「無理に近道するより整備された道を行け」物流の教訓からスクレイピングを捨て、公式RSS×Geminiで割り切ったAIアプリを作った話](https://qiita.com/tosane932/items/92bcf28cd91d645596bd)
 
 ---
@@ -207,56 +219,55 @@ Webデザインでは、見た目を整えることだけでなく、**見る人
 
 - **オンラインデモ**: [運転性格診断テストをブラウザで体験する](https://tosane932.github.io/driver-personality-test/)
 - **概要**: 7年7か月のドライバー経験をもとに、物流現場で起こり得る判断場面を全50問の診断形式へ落とし込んだブラウザ完結型Webアプリケーション
-- **独自性**: 単純な正解・不正解ではなく、現場におけるリスク許容度を5段階の傾斜配点で表現し、回答結果を5種類の運転傾向として可視化
-- **設計・実装内容**:
-  - Fisher-Yatesアルゴリズムによる設問・選択肢のランダム化
-  - sql.jsとLocalStorageを利用した診断履歴の保存
-  - 元データを変更しない非破壊シャッフル
-  - キャッシュバスティングによる更新反映
-  - `isProcessing`フラグによる多重操作防止
-  - スマートフォン対応UI
-  - rippleアニメーションによる操作フィードバック
-- **設計判断**: 現在の小規模データではLocalStorageを採用し、データ量が増えた場合にはIndexedDBへ移行する方針をREADMEに記載
+- **特徴**: 5段階の傾斜配点、Fisher-Yatesランダム化、LocalStorage履歴保存、多重操作防止
 - **公開記事**:
   - [「❓️なぜ『運転性格診断クイズ』なのに、これだけ時間をかけたのか」](https://qiita.com/tosane932/items/220d0f7d36bd79b2aa81)
   - [「🚽トイレの点滅ランプと"isProcessing"フラグが同じだった件」](https://qiita.com/tosane932/items/33734f1e963fcb370318)
 
 ---
 
+<details>
+<summary><strong>📦 その他のリポジトリを表示する</strong></summary>
+
+<br>
+
 ### 4. [python-practice](https://github.com/tosane932/python-practice)
 
 【Python / Excel】
 
 - **概要**: 大手ニュースサイトを対象とした、データ抽出および蓄積の技術検証プログラム
-- **解決した課題・実装内容**: Webサイトからの直接取得が安定しなかったため、公式RSSフィードを利用する取得方式へ変更。抽出したデータをExcelへ自動保存・追記し、重複データを監視・排除するロジックを実装
+- **設計判断**: Webサイトからの直接取得が安定しなかったため、公式RSSフィードを利用する取得方式へ変更
+- **実装内容**: Excelへの自動保存・追記、重複データの監視・排除
 - **公開記事**: [「車載ローカルサーバー構想を損切りし、Webアプリケーション開発へ舵を切った判断理由」](https://qiita.com/tosane932/items/37c9d2c482a6611d2f25)
-
----
 
 ### 5. [rails_practice](https://github.com/tosane932/rails_practice)
 
 【Ruby / Rails 8 / SQLite3 / Render】
 
-- **概要**: より大規模な開発への対応を見据えてRuby on Rails 8を採用し、クラウド環境におけるインフラ制約への対応を検証したWebアプリケーション
-- **解決した課題・実装内容**:
-  - Render無料枠のメモリ不足に対し、アセットのローカルプリコンパイルを導入
-  - サーバー再起動でSQLite3のデータが消失する課題に対し、`storage/`ディレクトリを永続ディスクへ接続
+- **概要**: Rails 8とクラウド環境の制約対応を検証したWebアプリケーション
+- **実装内容**:
+  - Render無料枠のメモリ不足に対してローカルプリコンパイルを導入
+  - SQLite3のデータ消失対策として`storage/`を永続ディスクへ接続
 - **公開記事**: [「Render無料枠の制限（512MB RAM・Read-only）を回避したRails 8のデプロイ検証」](https://qiita.com/tosane932/items/58e00fc7353ef76b4a62)
-
----
 
 ### 6. [hiroshima-logistics-hub](https://github.com/tosane932/hiroshima-logistics-hub)
 
 【Python / JSON / GitHub Pages】
 
 - **概要**: 物流運行管理に必要な外部環境データを、メインサイトへ負荷をかけずに供給する「データ出荷型」Webポータル
-- **解決した課題・設計判断**: 画面表示時の動的データ取得による通信待ちを減らすため、Pythonスクリプトで事前にデータを取得し、`data.json`として出力する方式を採用
-- **構成**: Pythonバックエンドを常時稼働させず、GitHub Pagesなどの静的ホスティングで配信できる軽量なフロントエンド構成
+- **設計判断**: Pythonで事前にデータを取得し、`data.json`として静的サイトへ供給
 - **公開記事**: [「Python学習開始24日目の記録：物流現場でWebエンジニアを目指す86時間の歩み」](https://qiita.com/tosane932/items/a227899ee58d68020c21)
+
+</details>
 
 ---
 
 ## 🛠️ 開発環境・技術スタック
+
+<details>
+<summary><strong>💻 使用環境・技術スタックを表示する</strong></summary>
+
+<br>
 
 ### 開発環境
 
@@ -334,6 +345,8 @@ Webデザインでは、見た目を整えることだけでなく、**見る人
 - 開発中に起きた失敗・原因・修正・再発防止策をQiitaへ記録
 - READMEを定期的に見直し、現在の実装内容と一致させる運用
 - [過去の学習記録を「リファクタリング」する：感情的な記述を事実ベースの技術報告へ再編した理由](https://qiita.com/tosane932/items/3d05208f519db621efef)
+
+</details>
 
 ---
 
