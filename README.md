@@ -1,3 +1,6 @@
+![トップ画像](https://raw.githubusercontent.com/tosane932/sales_data_app/main/tosane932top.png)
+
+
 > **[Qiitaで開発記録・エラー解決記事を公開しています](https://qiita.com/tosane932)**
 
 # 🛠️ 現場経験を、使われるWebアプリケーションへ
