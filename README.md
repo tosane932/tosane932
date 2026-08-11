@@ -1,5 +1,4 @@
-![トップ画像](https://raw.githubusercontent.com/tosane932/sales_data_app/main/tosane932top.png)
-
+![tosane932 profile banner](profile-banner.png)
 
 > **[Qiitaで開発記録・エラー解決記事を公開しています](https://qiita.com/tosane932)**
 
