@@ -6,18 +6,28 @@
 
 物流・飲食・販売の現場経験と、Webデザインで培った視線誘導・配色・情報設計の知識を組み合わせ、**利用者が迷わず操作でき、実際の業務改善につながるWebアプリケーション**の開発に取り組んでいます。
 
-IT業界での実務経験はありませんが、2026年5月より、本業の大型・中型トラックドライバーを続けながら、PythonおよびRuby on Railsを用いたWebアプリケーション開発を独学で開始しました。
+IT業界での実務経験はありませんが、2026年5月12日より、本業の大型・中型トラックドライバーを続けながら、Pythonを中心にRuby on Railsも用いたWebアプリケーション開発を独学しています。
 
-学習開始から約3か月・累計172時間の段階で、以下の開発・運用を経験しています。
+学習開始以降、以下の開発・運用を経験しています。
 
 - Python / Flaskを用いたWebアプリケーション開発
 - PostgreSQL / SQLAlchemy / Alembicによるデータベース設計・変更管理
 - Docker / Docker Composeによる開発環境構築
 - pytest / GitHub Actionsによる自動テストとCI
-- pytestを3件から69件へ拡充し、入力値検証・DB整合性・rollback・履歴保持・ダッシュボード集計・認証・CSRF・アクセス制御まで回帰テスト化
+- pytestを**3件 → 9件 → 51件 → 69件 → 87件 → 91件**へ段階的に拡充
+- 入力値検証・DB整合性・rollback・履歴保持・ダッシュボード集計・認証・CSRF・アクセス制御を回帰テスト化
+- 空DBからAlembic headまで到達できることを自動検証するMigration回帰テスト
 - `(product_id, date)`のDB一意制約追加と、隔離PostgreSQL環境でのupgrade / downgrade検証
 - Flask-Loginによる単一管理者認証と、Flask-WTFによるCSRF保護
+- 認証設定fingerprintを用いた既存Sessionのfail-closed化
+- 改ざんされたCSRF tokenが業務処理へ到達しないことを回帰テスト化
 - 業務画面・APIを認証必須化し、匿名ユーザーからのAI API実行を防止
+- 不正な`year`・`month` queryをHTTP 400で拒否する入力検証
+- Gemini APIの429・503・想定外例外に対するfallbackをモックで回帰テスト
+- Falsification（反証）の観点から既存pytestの検出力を再検証
+- 代表的な11件の手動Mutation Testingを実施し、初回SURVIVEDした5件をテスト強化後に再検証
+- 選択した11 MutationすべてをKILL可能な状態までpytestを強化
+- Flask-SQLAlchemyの非推奨APIを整理し、現在のpytestを**91 passed, 0 warnings**へ改善
 - feature branch / Pull Request / GitHub Actionsを通した変更確認とmainへのMerge
 - Gunicorn / Renderによる本番公開
 - Gemini APIを利用したAI機能の実装
@@ -80,7 +90,7 @@ Webデザインでは、見た目を整えることだけでなく、**見る人
   - 限られた時間と車両容量の中で、効率的な運用を組み立てる業務を経験
 
 - **大型・中型トラックドライバー（現役）**
-  - 大型免許を保有し、7年7か月にわたり物流業務に従事
+  - 大型免許を保有し、7年以上にわたり物流業務に従事
   - 厳しい時間制限と安全基準の中で、運行判断、確認作業、ヒューマンエラー防止を実践
   - 「危険が起きてから対応するのではなく、起きる可能性を予測して先に潰す」という危険予知を、アプリ開発にも応用
 
@@ -97,31 +107,34 @@ Webデザインでは、見た目を整えることだけでなく、**見る人
 
 <br>
 
-| 日付 | マイルストーン・実装内容 | 累計学習 | 関連Qiita記事 |
+| 日付 | マイルストーン・実装内容 | 学習開始から | 関連Qiita記事 |
 | :--- | :--- | :--- | :--- |
-| **2026/05/12** | Pythonを中心とした本格的なシステム開発学習を開始。自動化プログラムとWebアプリケーションの設計・実装に着手 | - | - |
-| **2026/05/23** | GitHubによるソースコード管理環境を構築し、Python / Flaskを用いた初期3システムを公開。構想段階で実現性を検証し、車載ローカルサーバー案からWebアプリケーション開発へ方針転換 | 12日 / 56h | [車載ローカルサーバー構想を損切りし...](https://qiita.com/tosane932/items/37c9d2c482a6611d2f25) |
-| **2026/06/02** | Ruby on Rails 8を用いたWebアプリケーションをRenderへ本番公開。無料クラウド環境のメモリ・ファイルシステム制約を調査し、ローカルプリコンパイルと永続ディスクによる代替案を検証 | 22日 / 81h | [Render無料枠の制限を回避したRails 8のデプロイ検証](https://qiita.com/tosane932/items/58e00fc7353ef76b4a62) |
-| **2026/06/03** | Pythonで事前に外部データを取得・整形し、JSONファイルとして静的サイトへ供給する「データ出荷型」構成を実装。画面表示時の通信待ちを抑える設計を検証 | 23日 / 86h | [Python学習開始24日目の記録...](https://qiita.com/tosane932/items/a227899ee58d68020c21) |
-| **2026/06/18** | 過去のREADME・学習記録・技術記事を全面的に見直し。感情中心の記述から、現象・原因・判断・結果を区別した事実ベースの技術ドキュメントへ再構成 | 38日 / 93h | [過去の学習記録を『リファクタリング』する...](https://qiita.com/tosane932/items/3d05208f519db621efef) |
-| **2026/06/24** | `sales_data_app`のデータ保存先をSQLiteからPostgreSQLへ移行 | 44日 / 98h | - |
-| **2026/06/28** | `sales_data_app`のコード全体を再点検し、重複処理・不要コード・例外処理不足など9件の問題を発見・修正 | 48日 / 100h | [学習100時間のトラックドライバーが...](https://qiita.com/tosane932/items/ac18b633c8c87b9807bb) |
-| **2026/06/30** | `sales_data_app`をDocker化し、FlaskとPostgreSQLをまとめて起動できる再現可能な開発環境を構築 | 50日 / 104h | - |
-| **2026/07/02** | Docker上のFlaskコンテナとPostgreSQLコンテナを連携し、名前解決・ボリューム・ローカルとの差異を検証 | 52日 / 108h | [FlaskとPostgreSQLのマルチコンテナ環境における...](https://qiita.com/tosane932/items/e19ed4a2ffe27f53faf0) |
-| **2026/07/04** | `sales_data_app`をRenderへ本番デプロイ。環境変数・DB接続・起動処理の差異を切り分けて修正 | 54日 / 113h | [【実録】学習113時間のトラックドライバーが...](https://qiita.com/tosane932/items/31bdab8ee2ab8bae2c50) |
-| **2026/07/06** | 全50問の運転性格診断アプリを開発。Fisher-Yates法と5段階傾斜配点を実装 | 56日 / 120h | [なぜ『運転性格診断クイズ』なのに...](https://qiita.com/tosane932/items/220d0f7d36bd79b2aa81) |
-| **2026/07/09** | 運転性格診断アプリへrippleアニメーションと多重操作防止処理を追加 | 59日 / 122h | [🚽トイレの点滅ランプと"isProcessing"フラグが同じだった件](https://qiita.com/tosane932/items/33734f1e963fcb370318) |
-| **2026/07/11** | Dockerfileをマルチステージビルド化し、イメージサイズを実測 | 61日 / 125h | [マルチステージビルドで積み替えても、3MBしか減らなかった話](https://qiita.com/tosane932/items/c1609f17cddf842f1e7c) |
-| **2026/07/11** | pytestとGitHub Actionsを導入し、GitHubへのPush時に自動テストを実行するCI環境を構築 | 61日 / 125h | [トラックドライバーが「点検ゲート」を作ってみたら、テストの落とし穴にハマった話](https://qiita.com/tosane932/items/b9b6576c1fda3d3a76d2) |
-| **2026/07/16** | `is_active`による論理削除、過去売上履歴保持、Alembic、Gemini APIのボタン実行化、Gunicorn本番起動を実装 | 66日 / 135h | [売上履歴を壊さず商品を販売終了にしたい――Flaskで論理削除とGemini API節約を実装した記録](https://qiita.com/tosane932/items/4825452f4bb73fd90ba8) |
-| **2026/07/17** | `puoppo_app`へGoogle OAuthとFlask-Loginを導入 | 67日 / 138h | - |
-| **2026/07/18** | CSSを`static/style.css`へ分離し、ページ別スコープを設定 | 68日 / 143h | [「保存」と「更新」は違う。元お好み焼き職人が店長目線でFlaskアプリの迷うUIを潰した話](https://qiita.com/tosane932/items/245152c844261e615641) |
-| **2026/07/18** | 店長目線で文言・配色・未来年表示・登録状態・画面導線を改善 | 68日 / 143h | [「保存」と「更新」は違う。元お好み焼き職人が店長目線でFlaskアプリの迷うUIを潰した話](https://qiita.com/tosane932/items/245152c844261e615641) |
-| **2026/07/19** | `sales_data_app`のリポジトリ全体を5時間総点検し、不要コード・画像資料・README・ignore設定などを整理 | 69日 / 148h | [🚛 動いているFlaskアプリを5時間総点検――コード・README・Docker・Gitを「現在の仕様」に揃える方法](https://qiita.com/tosane932/items/02de476fad8f0c1261e0) |
-| **2026/08/02** | VS Code版Codexで`静的レビュー`を実施。18件の改善候補を抽出し、最初に動的ランキングの保存型XSSを修正 | 83日 / 152h | [🔨47秒でXSS修正！？VS Code版Codexを「他部署から来たベテラン点検員」として使ってみた](https://qiita.com/tosane932/items/95f998ff98c4ac2ec5d9) |
-| **2026/08/06** | 欠落していた初期マイグレーションを修復し、空DB構築と既存DB複製環境の両経路を検証 | 87日 / 155h | [Flask-Migrate導入後の空DBで「テーブルが存在しない」と失敗した原因と、初期マイグレーションを修復した記録](https://qiita.com/tosane932/items/13c2ca0e17716594aa1e) |
-| **2026/08/10** | pytest強化を第2段階まで実施。3件→9件→51件へ拡充し、売上POST・商品POST・DB一意制約・rollback・履歴保持・dashboard APIを回帰テスト化。AI返答表示も`innerHTML`から`innerText`へ変更 | 91日 / 167h | [pytestを「事故防止台帳」として育てる 第2段階](https://qiita.com/tosane932/items/b91261e7103df5792f7d) |
-| **2026/08/11** | pytest強化第3段階を完了。単一管理者認証、CSRF保護、業務画面・APIのアクセス制御を実装し、51件→69件へ拡充。feature branchからPull Requestを作成し、GitHub Actions成功後にmainへMerge | 92日 / 172h | [pytestを「事故防止台帳」として育てる 第3段階](https://qiita.com/tosane932/items/6d1ca5490979c8cf9d62) |
+| **2026/05/12** | Pythonを中心とした本格的なシステム開発学習を開始。自動化プログラムとWebアプリケーションの設計・実装に着手 | 開始日 | - |
+| **2026/05/23** | GitHubによるソースコード管理環境を構築し、Python / Flaskを用いた初期3システムを公開。構想段階で実現性を検証し、車載ローカルサーバー案からWebアプリケーション開発へ方針転換 | 12日 | [車載ローカルサーバー構想を損切りし...](https://qiita.com/tosane932/items/37c9d2c482a6611d2f25) |
+| **2026/06/02** | Ruby on Rails 8を用いたWebアプリケーションをRenderへ本番公開。無料クラウド環境のメモリ・ファイルシステム制約を調査し、ローカルプリコンパイルと永続ディスクによる代替案を検証 | 22日 | [Render無料枠の制限を回避したRails 8のデプロイ検証](https://qiita.com/tosane932/items/58e00fc7353ef76b4a62) |
+| **2026/06/03** | Pythonで事前に外部データを取得・整形し、JSONファイルとして静的サイトへ供給する「データ出荷型」構成を実装。画面表示時の通信待ちを抑える設計を検証 | 23日 | [Python学習開始24日目の記録...](https://qiita.com/tosane932/items/a227899ee58d68020c21) |
+| **2026/06/18** | 過去のREADME・学習記録・技術記事を全面的に見直し。感情中心の記述から、現象・原因・判断・結果を区別した事実ベースの技術ドキュメントへ再構成 | 38日 | [過去の学習記録を『リファクタリング』する...](https://qiita.com/tosane932/items/3d05208f519db621efef) |
+| **2026/06/24** | `sales_data_app`のデータ保存先をSQLiteからPostgreSQLへ移行 | 44日 | - |
+| **2026/06/28** | `sales_data_app`のコード全体を再点検し、重複処理・不要コード・例外処理不足など9件の問題を発見・修正 | 48日 | [学習100時間のトラックドライバーが...](https://qiita.com/tosane932/items/ac18b633c8c87b9807bb) |
+| **2026/06/30** | `sales_data_app`をDocker化し、FlaskとPostgreSQLをまとめて起動できる再現可能な開発環境を構築 | 50日 | - |
+| **2026/07/02** | Docker上のFlaskコンテナとPostgreSQLコンテナを連携し、名前解決・ボリューム・ローカルとの差異を検証 | 52日 | [FlaskとPostgreSQLのマルチコンテナ環境における...](https://qiita.com/tosane932/items/e19ed4a2ffe27f53faf0) |
+| **2026/07/04** | `sales_data_app`をRenderへ本番デプロイ。環境変数・DB接続・起動処理の差異を切り分けて修正 | 54日 | [【実録】学習113時間のトラックドライバーが...](https://qiita.com/tosane932/items/31bdab8ee2ab8bae2c50) |
+| **2026/07/06** | 全50問の運転性格診断アプリを開発。Fisher-Yates法と5段階傾斜配点を実装 | 56日 | [なぜ『運転性格診断クイズ』なのに...](https://qiita.com/tosane932/items/220d0f7d36bd79b2aa81) |
+| **2026/07/09** | 運転性格診断アプリへrippleアニメーションと多重操作防止処理を追加 | 59日 | [🚽トイレの点滅ランプと"isProcessing"フラグが同じだった件](https://qiita.com/tosane932/items/33734f1e963fcb370318) |
+| **2026/07/11** | Dockerfileをマルチステージビルド化し、イメージサイズを実測 | 61日 | [マルチステージビルドで積み替えても、3MBしか減らなかった話](https://qiita.com/tosane932/items/c1609f17cddf842f1e7c) |
+| **2026/07/11** | pytestとGitHub Actionsを導入し、GitHubへのPush時に自動テストを実行するCI環境を構築 | 61日 | [トラックドライバーが「点検ゲート」を作ってみたら、テストの落とし穴にハマった話](https://qiita.com/tosane932/items/b9b6576c1fda3d3a76d2) |
+| **2026/07/16** | `is_active`による論理削除、過去売上履歴保持、Alembic、Gemini APIのボタン実行化、Gunicorn本番起動を実装 | 66日 | [売上履歴を壊さず商品を販売終了にしたい――Flaskで論理削除とGemini API節約を実装した記録](https://qiita.com/tosane932/items/4825452f4bb73fd90ba8) |
+| **2026/07/17** | `puoppo_app`へGoogle OAuthとFlask-Loginを導入 | 67日 | - |
+| **2026/07/18** | CSSを`static/style.css`へ分離し、ページ別スコープを設定 | 68日 | [「保存」と「更新」は違う。元お好み焼き職人が店長目線でFlaskアプリの迷うUIを潰した話](https://qiita.com/tosane932/items/245152c844261e615641) |
+| **2026/07/18** | 店長目線で文言・配色・未来年表示・登録状態・画面導線を改善 | 68日 | [「保存」と「更新」は違う。元お好み焼き職人が店長目線でFlaskアプリの迷うUIを潰した話](https://qiita.com/tosane932/items/245152c844261e615641) |
+| **2026/07/19** | `sales_data_app`のリポジトリ全体を5時間総点検し、不要コード・画像資料・README・ignore設定などを整理 | 69日 | [🚛 動いているFlaskアプリを5時間総点検――コード・README・Docker・Gitを「現在の仕様」に揃える方法](https://qiita.com/tosane932/items/02de476fad8f0c1261e0) |
+| **2026/08/02** | VS Code版Codexで静的レビューを実施。18件の改善候補を抽出し、最初に動的ランキングの保存型XSSを修正 | 83日 | [🔨47秒でXSS修正！？VS Code版Codexを「他部署から来たベテラン点検員」として使ってみた](https://qiita.com/tosane932/items/95f998ff98c4ac2ec5d9) |
+| **2026/08/06** | 欠落していた初期マイグレーションを修復し、空DB構築と既存DB複製環境の両経路を検証 | 87日 | [Flask-Migrate導入後の空DBで「テーブルが存在しない」と失敗した原因と、初期マイグレーションを修復した記録](https://qiita.com/tosane932/items/13c2ca0e17716594aa1e) |
+| **2026/08/10** | pytest強化を第2段階まで実施。3件→9件→51件へ拡充し、売上POST・商品POST・DB一意制約・rollback・履歴保持・dashboard APIを回帰テスト化。AI返答表示も`innerHTML`から`innerText`へ変更 | 91日 | [pytestを「事故防止台帳」として育てる 第2段階](https://qiita.com/tosane932/items/b91261e7103df5792f7d) |
+| **2026/08/11** | pytest強化第3段階を完了。単一管理者認証、CSRF保護、業務画面・APIのアクセス制御を実装し、51件→69件へ拡充。Pull RequestとGitHub Actionsを通してmainへMerge | 92日 | [pytestを「事故防止台帳」として育てる 第3段階](https://qiita.com/tosane932/items/6d1ca5490979c8cf9d62) |
+| **2026/08/13** | pytest強化第4段階を完了。空DB Migration、不正query、Geminiエラーfallback、認証Session、改ざんCSRFを強化し、69件→87件へ拡充 | 94日 | [pytestを「事故防止台帳」として育てる 第4段階](https://qiita.com/tosane932/items/372270330e73583a227f) |
+| **2026/08/15** | pytest強化第5段階を完了。Falsificationと手動Mutation Testingで既存pytestの検出力を検証。11 Mutation中、初回SURVIVEDした5件をテスト強化後に再検証し、87件→91件へ拡充 | 96日 | [pytestを「事故防止台帳」として育てる 第5段階](https://qiita.com/tosane932/items/85fd24c7baa6fe7c76a7) |
+| **2026/08/15** | Stage 5で可視化されたFlask-SQLAlchemyのDeprecationWarningを修正。非推奨の`db.get_engine()`を`db.engine`へ統一し、最終結果を91 passed・0 warningsへ改善 | 96日 | - |
 
 </details>
 
@@ -129,7 +142,7 @@ Webデザインでは、見た目を整えることだけでなく、**見る人
 
 ## ⚡ 開発実績・リポジトリ一覧
 
-### 1. [🍞sales_data_app](https://github.com/tosane932/sales_data_app)
+### 1. [🍞 sales_data_app](https://github.com/tosane932/sales_data_app)
 
 【Python / Flask / PostgreSQL / Docker / Gemini API】
 
@@ -146,55 +159,183 @@ Webデザインでは、見た目を整えることだけでなく、**見る人
 - Docker / Docker Composeによる環境構築
 - Gunicorn / Renderによる本番公開
 - pytest / GitHub Actionsによる自動テスト
-- pytestを3件から69件まで段階的に拡充
+- pytestを**3件から91件**まで段階的に拡充
+- 空DBからAlembic headまで到達できるMigration回帰テスト
 - Flask-Loginによる単一管理者認証
 - Flask-WTFによるCSRF保護
 - 業務画面・APIの認証必須化
+- 認証設定fingerprintによる既存Sessionのfail-closed化
+- 改ざんCSRF tokenの拒否と副作用防止テスト
 - 匿名ユーザーによるAI API実行の防止
+- 不正な年月queryのHTTP 400処理
+- Gemini APIの429・503・想定外例外のfallbackテスト
+- Falsificationによる既存pytestの検出力検証
+- 代表的な11件の手動Mutation Testing
 - feature branch / Pull Request / GitHub Actionsを用いた変更確認フロー
-- Gemini APIの429・503を区別したエラーハンドリング
 - VS Code版Codexによる静的レビュー
 - 保存型XSS対策
+- HTML sink混入を検知するXSS回帰テスト
+- Jinja2 autoescapeの初期表示経路を確認する回帰テスト
 - UI文言・配色・導線の改善
+- 現在のテスト結果：**91 passed, 0 warnings**
 
 <details>
 <summary><strong>🔧 sales_data_app の詳細な実装・検証内容を表示する</strong></summary>
 
 <br>
 
+### Database / Migration
+
 - 欠落していた初期テーブル作成履歴を調査し、`products`と`daily_sales`を作成する基礎revisionを追加
 - 既存の`is_active`追加revisionを基礎revisionへ接続し、空DBからheadまで到達できる履歴へ修復
 - `DailySales(product_id, date)`へ一意制約を追加し、同一商品・同一日の重複をDB側でも拒否
 - 通常環境とは異なるComposeプロジェクト名を使用し、コンテナ・ネットワーク・PostgreSQLボリュームを分離
-- 空DBから`flask db upgrade`、Gunicorn起動、HTTP 200を確認
+- 空PostgreSQLから`flask db upgrade`、Gunicorn起動、HTTP 200を確認
 - 既存DBを読み取り専用で`pg_dump`し、分離した複製DBへ復元してupgrade経路を検証
 - 一意制約追加migrationを隔離PostgreSQL環境でupgrade / downgrade / 再upgradeし、既存データが変化しないことを確認
-- pytestを3件→9件→51件→69件へ段階的に拡充
+- 一時SQLite DBを利用し、Alembic baseからheadまでupgradeできることをpytestで自動検証
+- 最終schema、必要table・column、Alembic revision、複合一意制約を回帰テスト化
+
+### Validation / Transaction
+
 - 売上POSTの日付・数量・配列長・商品IDをDB変更前に全件検証
 - 不正な売上リクエストをHTTP 400で拒否
 - 売上対象商品の存在・対象年月・販売状態を検証
 - 商品POSTの配列長・商品ID・対象年月・重複ID・価格・年月を事前検証
 - 不正入力時にProduct / DailySalesが変更されないことを確認
 - 売上POST・商品POSTの`commit()`失敗時に`rollback()`
+- 同じ商品の別日売上が存在しても、対象日以外を誤更新しないことを回帰テスト化
 - 論理削除後もProduct IDと過去DailySalesを保持
 - 既存Product ID再送信時に同じ行を再有効化する挙動をテスト化
 - `/api/dashboard-data`で年月別集計・ランキング・グラフ値・inactive商品の過去履歴・全期間集計を検証
+
+### Authentication / CSRF / Access Control
+
 - Flask-Loginを利用した単一管理者ログインを実装
 - `SECRET_KEY`、`ADMIN_USERNAME`、`ADMIN_PASSWORD_HASH`を環境変数から取得
 - Werkzeugの`check_password_hash()`を利用してpassword hashを検証
 - Flask-WTFの`CSRFProtect`をアプリ全体へ適用
 - `/login`、`/`、`/input`のPOSTフォームへCSRF tokenを追加
 - テスト環境でもCSRFを無効化せず、実際にtokenを取得してPOSTするfixtureを実装
-- 認証5件、CSRF6件、アクセス制御7件の計18件を追加
 - `/`、`/input`、`/dashboard`、`/api/dashboard-data`、`/api/ai-advice`、`/api/greeting`を`login_required`で保護
 - 匿名アクセス時に業務画面・APIが`/login`へredirectされることを回帰テスト化
 - 匿名状態では`/api/ai-advice`と`/api/greeting`からGemini Clientが呼び出されないことをモックで確認
-- `feature/auth-hardening`で認証・CSRF・アクセス制御を段階的に実装
-- Pull Request上のGitHub Actionsで69件すべてGREENを確認してからmainへMerge
-- Merge後のmainでも69件GREENとcleanな作業ツリーを確認
+- 管理者password hashから認証設定fingerprintを生成し、Sessionへ保存
+- password hash変更後の既存Sessionをfail-closedで拒否
+- fingerprint欠落Sessionも認証済みとして扱わないことを回帰テスト化
+- 認証設定が変わっていない既存Sessionは正常復元
+- login・商品・売上POSTに対して改ざんCSRF tokenをテスト
+- CSRF拒否時に認証SessionやDB変更などの副作用が発生しないことを確認
+
+### Dashboard / Gemini API
+
+- `year`・`month`が整数として解釈できない場合はHTTP 400で拒否
+- 不正なAI advice queryではGemini Clientへ到達しないことを確認
+- Gemini APIの429・503・想定外例外に対するfallbackメッセージをモックで回帰テスト
+- 認証済み`/api/ai-advice`のroute単位正常系を検証
+- 指定年月の売上だけがGeminiへ渡されることを確認
+- 前年同月データをfixtureへ追加し、月だけではなく年条件も正しく作用していることを回帰テスト化
+
+### XSS
+
 - 動的ランキング表示の`innerHTML`を廃止し、DOM APIと`textContent`へ変更
 - AI返答表示の`innerHTML`を`innerText`へ変更
 - XSS回帰テストでHTML風文字列が要素として解釈されないことを確認
+- `innerHTML`・`outerHTML`・`insertAdjacentHTML`などのHTML sinkが商品名表示へ混入した場合に検知するsource guardを追加
+- Jinja2による初期ランキング表示でもautoescapeが維持されることを実データを使って確認
+
+### pytest強化
+
+```text
+開始時
+3 passed
+
+第1段階
+9 passed
+
+第2段階
+51 passed
+
+第3段階
+69 passed
+
+第4段階
+87 passed
+
+第5段階
+91 passed
+
+Warning修正後
+91 passed, 0 warnings
+```
+
+第5段階では、単にテスト件数を増やすのではなく、
+
+> **現在のGREENが、本当に重要な仕様違反を検知できるのか**
+
+をFalsification（反証）の視点から検証しました。
+
+代表的な11 Mutationを手動で適用した結果、
+
+```text
+初回KILLED
+6件
+
+初回SURVIVED
+5件
+```
+
+となりました。
+
+SURVIVEDした5件について、
+
+- fixture不足
+- assertion不足
+- 異常Session状態の再現不足
+- XSSの表示経路不足
+
+などを分析し、pytestを強化しました。
+
+その後、同一Mutationを再適用し、
+
+```text
+選択した11 Mutation
+↓
+すべてREDを確認
+```
+
+しています。
+
+第5段階の正式変更は、
+
+```text
+test_ai_integration.py
+test_auth.py
+test_sales.py
+test_xss_regressions.py
+```
+
+のテストコードのみです。
+
+production code・template・model・migrationには正式変更を加えていません。
+
+Stage 5終了後に残っていたFlask-SQLAlchemyのDeprecationWarningについては、`migrations/env.py`の非推奨`db.get_engine()`を削除し、`db.engine`へ統一しました。
+
+最終結果は、
+
+```text
+91 passed, 0 warnings
+```
+
+です。
+
+### Development Flow
+
+- `feature/auth-hardening`で認証・CSRF・アクセス制御を段階的に実装
+- Pull Request #1とGitHub Actionsを通して69件GREEN後にmainへMerge
+- `feature/pytest-stage4`で第4段階を実施し、Pull Request #2を通して87件GREEN後にmainへMerge
+- `feature/pytest-stage5`で第5段階を実施し、Pull Request #3を通して91件GREEN後にmainへMerge
+- `fix/flask-sqlalchemy-warning`でWarningを修正し、Pull Request #4を通して91 passed・0 warningsを確認
 - HTML内のCSSを`static/style.css`へ分離
 - ページ専用クラスによるCSSの影響範囲制御
 - スマートフォン向けレスポンシブデザイン
@@ -221,14 +362,20 @@ Webデザインでは、見た目を整えることだけでなく、**見る人
 - [「トラックドライバーが『点検ゲート』を作ってみたら、テストの落とし穴にハマった話」](https://qiita.com/tosane932/items/b9b6576c1fda3d3a76d2)
 - [「🔨47秒でXSS修正！？VS Code版Codexを『他部署から来たベテラン点検員』として使ってみた」](https://qiita.com/tosane932/items/95f998ff98c4ac2ec5d9)
 - [Flask-Migrate導入後の空DBで「テーブルが存在しない」と失敗した原因と、初期マイグレーションを修復した記録](https://qiita.com/tosane932/items/13c2ca0e17716594aa1e)
-- [pytestを「事故防止台帳」として育てる 第1段階：3件の簡単なテストを9件の回帰テストへ強化した記録](https://qiita.com/tosane932/items/f3de1e190873a90de39f)
-- [pytestを「事故防止台帳」として育てる 第2段階：売上・商品登録まわりを51件のテストまで強化した記録](https://qiita.com/tosane932/items/b91261e7103df5792f7d)
-- [pytestを「事故防止台帳」として育てる 第3段階：51件から69件へ、認証・CSRF・アクセス制御を強化した記録](https://qiita.com/tosane932/items/6d1ca5490979c8cf9d62)
+
+#### pytest「事故防止台帳」強化シリーズ
+
+- [第1段階：3件の簡単なテストを9件の回帰テストへ強化](https://qiita.com/tosane932/items/f3de1e190873a90de39f)
+- [第2段階：売上・商品登録まわりを51件まで強化](https://qiita.com/tosane932/items/b91261e7103df5792f7d)
+- [第3段階：51件から69件へ、認証・CSRF・アクセス制御を強化](https://qiita.com/tosane932/items/6d1ca5490979c8cf9d62)
+- [第4段階：69件から87件へ、Migration・API・認証・CSRFを強化](https://qiita.com/tosane932/items/372270330e73583a227f)
+- [第5段階：Falsificationと手動Mutation Testingでpytestの検出力を検証](https://qiita.com/tosane932/items/85fd24c7baa6fe7c76a7)
+
 - [最新の開発記録はQiitaプロフィールから確認できます](https://qiita.com/tosane932)
 
 ---
 
-### 2. [🕊puoppo_app](https://github.com/tosane932/puoppo_app)
+### 2. [🕊 puoppo_app](https://github.com/tosane932/puoppo_app)
 
 【Python / Flask / SQLite3 / Gemini API / Google OAuth / Docker】
 
@@ -241,12 +388,12 @@ Webデザインでは、見た目を整えることだけでなく、**見る人
 
 ---
 
-### 3. [🚛driver-personality-test](https://github.com/tosane932/driver-personality-test)
+### 3. [🚛 driver-personality-test](https://github.com/tosane932/driver-personality-test)
 
 【JavaScript / HTML / CSS / sql.js】
 
 - **オンラインデモ**: [運転性格診断テストをブラウザで体験する](https://tosane932.github.io/driver-personality-test/)
-- **概要**: 7年7か月のドライバー経験をもとに、物流現場で起こり得る判断場面を全50問の診断形式へ落とし込んだブラウザ完結型Webアプリケーション
+- **概要**: 7年以上のドライバー経験をもとに、物流現場で起こり得る判断場面を全50問の診断形式へ落とし込んだブラウザ完結型Webアプリケーション
 - **特徴**: 5段階の傾斜配点、Fisher-Yatesランダム化、LocalStorage履歴保存、多重操作防止
 - **公開記事**:
   - [「❓️なぜ『運転性格診断クイズ』なのに、これだけ時間をかけたのか」](https://qiita.com/tosane932/items/220d0f7d36bd79b2aa81)
@@ -341,6 +488,9 @@ Webデザインでは、見た目を整えることだけでなく、**見る人
 - Flask-WTF / CSRFProtect
 - Werkzeug password hash verification
 - `login_required`によるアクセス制御
+- Session fingerprintによる認証設定変更検知
+- Jinja2 autoescape
+- DOM API / `textContent` / `innerText`
 - Authlib
 
 ### Infrastructure / Testing
@@ -352,6 +502,8 @@ Webデザインでは、見た目を整えることだけでなく、**見る人
 - GitHub Actions
 - pytest
 - GitHub Pull Request
+- Falsification
+- Manual Mutation Testing
 
 ### AI / External Data
 
@@ -399,6 +551,7 @@ Webデザインでは、見た目を整えることだけでなく、**見る人
 - ヒューマンエラーを個人の注意力だけに頼らず、仕組みで防ぐ
 - 技術を導入すること自体ではなく、現場の負担を減らすことを目的にする
 - 第三者が実際に触れられる状態で公開し、改善を継続する
+- テストがGREENであることだけで安心せず、そのテストが本当に重要な故障を検出できるかまで確認する
 
 物流・飲食・販売・保育などで働く人の声を課題発見の起点とし、実際に触れられるWebアプリケーションとして公開しながら改善を続けます。
 
@@ -407,10 +560,10 @@ Webデザインでは、見た目を整えることだけでなく、**見る人
 2026年末までに「現場で即戦力となるポートフォリオの完成」をマイルストーンとして設定し、以下の3つを軸に実績を積み重ねています。
 
 1. **技術の深掘り**  
-   Docker・データベース・CI/CD・クラウド・認証・セキュリティなど、アプリケーションの裏側まで理解し、堅牢なシステムを設計・構築できる力を身につける。
+   Docker・データベース・CI/CD・クラウド・認証・セキュリティ・テスト設計など、アプリケーションの裏側まで理解し、堅牢なシステムを設計・構築できる力を身につける。
 
 2. **実績の証明**  
-   開発過程やエラー解決、UI改善の判断理由を、事実ベースの技術記事（Qiita）およびソースコード（GitHub）として継続的に公開する。
+   開発過程やエラー解決、UI改善、テスト設計の判断理由を、事実ベースの技術記事（Qiita）およびソースコード（GitHub）として継続的に公開する。
 
 3. **現場課題からのプロダクト開発**  
    自身や家族、実際の現場で働く人の声をもとに課題を抽出し、物流・飲食・販売・保育など幅広い分野で役立つWebアプリケーションを企画・開発・公開する。
