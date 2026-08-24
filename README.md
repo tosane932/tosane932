@@ -1,6 +1,6 @@
 ![tosane932 profile banner](profile-banner.png)
 
-> **[Qiitaで開発記録・エラー解決記事を公開しています](https://qiita.com/tosane932)**
+> **[Qiita](https://qiita.com/tosane932) / [Zenn](https://zenn.dev/tosane932) / [DEV Community](https://dev.to/tosane932) で、開発記録・エラー解決・検証結果を公開しています**
 
 # 🛠️ 現場経験を、使われるWebアプリケーションへ
 
@@ -14,7 +14,7 @@ IT業界での実務経験はありませんが、2026年5月12日より、本�
 - PostgreSQL / SQLAlchemy / Alembicによるデータベース設計・変更管理
 - Docker / Docker Composeによる開発環境構築
 - pytest / GitHub Actionsによる自動テストとCI
-- pytestを**3件 → 9件 → 51件 → 69件 → 87件 → 91件**へ段階的に拡充
+- pytestを**3件 → 9件 → 51件 → 69件 → 87件 → 91件 → 114件 → 201件**へ段階的に拡充
 - 入力値検証・DB整合性・rollback・履歴保持・ダッシュボード集計・認証・CSRF・アクセス制御を回帰テスト化
 - 空DBからAlembic headまで到達できることを自動検証するMigration回帰テスト
 - `(product_id, date)`のDB一意制約追加と、隔離PostgreSQL環境でのupgrade / downgrade検証
@@ -27,7 +27,13 @@ IT業界での実務経験はありませんが、2026年5月12日より、本�
 - Falsification（反証）の観点から既存pytestの検出力を再検証
 - 代表的な11件の手動Mutation Testingを実施し、初回SURVIVEDした5件をテスト強化後に再検証
 - 選択した11 MutationすべてをKILL可能な状態までpytestを強化
-- Flask-SQLAlchemyの非推奨APIを整理し、現在のpytestを**91 passed, 0 warnings**へ改善
+- Flask-SQLAlchemyの非推奨APIを整理し、pytest強化第5段階時点で**91 passed, 0 warnings**まで改善
+- Guest Demo向けに`Dataset`モデルと`Product.dataset_id`を導入し、既存管理者データを安全に分離するMigrationを実装
+- Admin / Guestのidentityを分離し、Guest DatasetからのみGuestUserを復元するfail-closedな認証・認可基盤を実装
+- Product / DailySales / Dashboard / AI / seedをDataset単位にスコープし、Admin・Guest A・Guest B間の越境を回帰テスト化
+- 外部から`dataset_id`やAdmin風Session値を差し込んでも権限昇格・対象Dataset変更ができないことを検証
+- 正規Admin / Guestだけを通す`admin_or_guest_required`を導入し、Guest Demo対象の業務画面・APIをDataset境界内で利用可能に変更
+- Guest Demo第4段階完了時点で**201 passed**、Pull Request #6のGitHub Actions成功を確認
 - feature branch / Pull Request / GitHub Actionsを通した変更確認とmainへのMerge
 - Gunicorn / Renderによる本番公開
 - Gemini APIを利用したAI機能の実装
@@ -35,7 +41,7 @@ IT業界での実務経験はありませんが、2026年5月12日より、本�
 - JavaScriptによるブラウザ完結型Webアプリケーション開発
 - VS Code版Codexを用いた、事実と推測を分けたリポジトリ全体の静的レビュー
 - Codexへ変更範囲・禁止事項・停止条件を段階ごとに指定し、小さな単位で修正・検証する運用
-- 開発過程・失敗・設計判断のQiitaおよびGitHubへの継続的な記録
+- 開発過程・失敗・設計判断をQiita・Zenn・DEV Community・GitHubへ継続的に記録
 
 Webデザインでは、見た目を整えることだけでなく、**見る人の視線の流れ、情報の優先順位、ボタン配置、操作手順の分かりやすさ**を意識しています。
 
@@ -135,6 +141,9 @@ Webデザインでは、見た目を整えることだけでなく、**見る人
 | **2026/08/13** | pytest強化第4段階を完了。空DB Migration、不正query、Geminiエラーfallback、認証Session、改ざんCSRFを強化し、69件→87件へ拡充 | 94日 | [pytestを「事故防止台帳」として育てる 第4段階](https://qiita.com/tosane932/items/372270330e73583a227f) |
 | **2026/08/15** | pytest強化第5段階を完了。Falsificationと手動Mutation Testingで既存pytestの検出力を検証。11 Mutation中、初回SURVIVEDした5件をテスト強化後に再検証し、87件→91件へ拡充 | 96日 | [pytestを「事故防止台帳」として育てる 第5段階](https://qiita.com/tosane932/items/85fd24c7baa6fe7c76a7) |
 | **2026/08/15** | Stage 5で可視化されたFlask-SQLAlchemyのDeprecationWarningを修正。非推奨の`db.get_engine()`を`db.engine`へ統一し、最終結果を91 passed・0 warningsへ改善 | 96日 | - |
+| **2026/08/19** | Guest Demo第1段階を完了。`Dataset`モデルと`Product.dataset_id`を追加し、既存Productを管理者Datasetへbackfill。Expand → Migrate → Contractの段階的Migrationとデータ保全検証を実施し、pytestを114件へ拡充。Pull Request #5をmainへMerge | 100日 | [Guest Demo実装の第1段階](https://qiita.com/tosane932/items/77cc200ab78761174b91) |
+| **2026/08/23** | Guest Demo第3段階まで進行。Product / DailySales / Dashboard / AI / seedをDataset単位にスコープし、Admin・Guest間およびGuest A・Guest B間の越境を防止。pytestを195件まで拡充 | 104日 | - |
+| **2026/08/24** | Guest Demo第4段階を完了。正規Guestを実業務routeへ通しつつDataset境界を維持。商品・売上POST、Dashboard HTML / API、AIプロンプト、Session改ざんによるAdmin昇格防止まで検証し、201 passed・GitHub Actions successを確認。Pull Request #6をmainへMerge | 105日 | - |
 
 </details>
 
@@ -146,9 +155,10 @@ Webデザインでは、見た目を整えることだけでなく、**見る人
 
 【Python / Flask / PostgreSQL / Docker / Gemini API】
 
-- **オンラインデモ**: [ベーカリー売上管理システムをブラウザで体験する](https://bakery-salesdata.onrender.com/)
+- **公開環境**: [ベーカリー売上管理システムを開く](https://bakery-salesdata.onrender.com/)
 - **概要**: 商品マスタ、日次売上入力、売上分析、AIによる経営アドバイスを一元化した、ベーカリー向けWebアプリケーション
 - **コンセプト**: 元お好み焼き職人としての店舗運営経験とWebデザインの知識を生かし、老若男女が迷わず使える売上管理システムを設計
+- **Guest Demo**: Dataset分離・Guest identity / session・実業務route開放までmainへ統合済み。体験時間表示、期限切れデータ削除、AI利用回数制限、リセットなどの最終段階は引き続き実装中
 
 ### 主な設計・実装
 
@@ -159,25 +169,33 @@ Webデザインでは、見た目を整えることだけでなく、**見る人
 - Docker / Docker Composeによる環境構築
 - Gunicorn / Renderによる本番公開
 - pytest / GitHub Actionsによる自動テスト
-- pytestを**3件から91件**まで段階的に拡充
+- pytestを**3件から201件**まで段階的に拡充
 - 空DBからAlembic headまで到達できるMigration回帰テスト
 - Flask-Loginによる単一管理者認証
 - Flask-WTFによるCSRF保護
-- 業務画面・APIの認証必須化
-- 認証設定fingerprintによる既存Sessionのfail-closed化
+- 認証設定fingerprintによる既存Admin Sessionのfail-closed化
 - 改ざんCSRF tokenの拒否と副作用防止テスト
 - 匿名ユーザーによるAI API実行の防止
 - 不正な年月queryのHTTP 400処理
 - Gemini APIの429・503・想定外例外のfallbackテスト
 - Falsificationによる既存pytestの検出力検証
 - 代表的な11件の手動Mutation Testing
+- `Dataset`モデルによるAdmin / Guestデータ領域の分離
+- `Product.dataset_id`の導入と既存データbackfill、NOT NULL化
+- Guest identity / sessionの発行・復元とfail-closedな認可
+- `require_current_dataset()`による認証主体ごとのDataset解決
+- Product / DailySales / Dashboard / AI / seedのDatasetスコープ
+- Guest A / Guest B間の商品・売上・Dashboard・AIデータ越境防止
+- 越境POST失敗時にDB副作用を残さない原子性の回帰テスト
+- Sessionへrole・is_admin・dataset_id相当の値を差し込んでもAdminへ昇格できないことを検証
+- 正規Admin / Guestのみを通す`admin_or_guest_required`を業務routeへ適用
 - feature branch / Pull Request / GitHub Actionsを用いた変更確認フロー
 - VS Code版Codexによる静的レビュー
 - 保存型XSS対策
 - HTML sink混入を検知するXSS回帰テスト
 - Jinja2 autoescapeの初期表示経路を確認する回帰テスト
 - UI文言・配色・導線の改善
-- 現在のテスト結果：**91 passed, 0 warnings**
+- 現在のテスト結果：**201 passed**
 
 <details>
 <summary><strong>🔧 sales_data_app の詳細な実装・検証内容を表示する</strong></summary>
@@ -195,6 +213,11 @@ Webデザインでは、見た目を整えることだけでなく、**見る人
 - 一意制約追加migrationを隔離PostgreSQL環境でupgrade / downgrade / 再upgradeし、既存データが変化しないことを確認
 - 一時SQLite DBを利用し、Alembic baseからheadまでupgradeできることをpytestで自動検証
 - 最終schema、必要table・column、Alembic revision、複合一意制約を回帰テスト化
+- Guest Demo向けに`datasets`テーブルを追加し、Admin Datasetを作成
+- `products.dataset_id`をNULL可で追加した後、既存ProductをAdmin Datasetへbackfill
+- Product / DailySalesの件数・ID、NULL / orphanの有無を検証してから`products.dataset_id`をNOT NULL化
+- Dataset → Productの1:N、外部キー、INDEX、`ON DELETE CASCADE`を追加
+- Guest Datasetが存在する状態では危険なdowngradeを拒否するMigration guardを実装
 
 ### Validation / Transaction
 
@@ -208,6 +231,8 @@ Webデザインでは、見た目を整えることだけでなく、**見る人
 - 論理削除後もProduct IDと過去DailySalesを保持
 - 既存Product ID再送信時に同じ行を再有効化する挙動をテスト化
 - `/api/dashboard-data`で年月別集計・ランキング・グラフ値・inactive商品の過去履歴・全期間集計を検証
+- Guest AからGuest Bの商品IDを混ぜたPOSTを全体拒否し、一部だけ保存されないことを確認
+- Guest AからGuest Bへの売上入力を拒否し、越境失敗時にDB副作用を残さないことを確認
 
 ### Authentication / CSRF / Access Control
 
@@ -217,15 +242,34 @@ Webデザインでは、見た目を整えることだけでなく、**見る人
 - Flask-WTFの`CSRFProtect`をアプリ全体へ適用
 - `/login`、`/`、`/input`のPOSTフォームへCSRF tokenを追加
 - テスト環境でもCSRFを無効化せず、実際にtokenを取得してPOSTするfixtureを実装
-- `/`、`/input`、`/dashboard`、`/api/dashboard-data`、`/api/ai-advice`、`/api/greeting`を`login_required`で保護
-- 匿名アクセス時に業務画面・APIが`/login`へredirectされることを回帰テスト化
-- 匿名状態では`/api/ai-advice`と`/api/greeting`からGemini Clientが呼び出されないことをモックで確認
 - 管理者password hashから認証設定fingerprintを生成し、Sessionへ保存
-- password hash変更後の既存Sessionをfail-closedで拒否
-- fingerprint欠落Sessionも認証済みとして扱わないことを回帰テスト化
-- 認証設定が変わっていない既存Sessionは正常復元
+- password hash変更後の既存Admin Sessionをfail-closedで拒否
+- fingerprint欠落Admin Sessionも認証済みとして扱わないことを回帰テスト化
+- 認証設定が変わっていない既存Admin Sessionは正常復元
 - login・商品・売上POSTに対して改ざんCSRF tokenをテスト
 - CSRF拒否時に認証SessionやDB変更などの副作用が発生しないことを確認
+- Guest用identityを`guest:{uuid}`形式で分離し、Admin IDとGuest IDを相互復元しないことを確認
+- GuestUserは対応する`Dataset(kind="guest", system_key=None)`が存在する場合のみ復元
+- Guest Dataset削除済み・非guest Dataset・DBエラー時はfail-closed
+- `admin_or_guest_required`により、正規AdminUser / GuestUser以外の認証済みprincipalを403で拒否
+- `/`、`/input`、`/dashboard`、`/api/dashboard-data`、`/api/ai-advice`、`/api/greeting`をAdmin / Guestの両方からDataset境界内で利用可能に変更
+- `require_current_dataset()`でAdminはAdmin Dataset、Guestは自身のGuest Datasetだけを解決
+- SessionへAdmin風のrole・flag・dataset_idを差し込んでもGuestからAdmin Datasetへ昇格できないことを回帰テスト化
+
+### Guest Demo / Dataset Isolation
+
+- Product一覧・更新・論理削除を現在のDatasetへ限定
+- DailySales取得・入力をProduct経由で現在のDatasetへ限定
+- Dashboard HTML / APIの集計を現在のDatasetへ限定
+- Dataset間に同名商品が存在しても売上を合算しないことを確認
+- Geminiへ渡す売上データ・プロンプトへ他Datasetの情報を混入させないことを確認
+- seedの存在判定をAdmin Dataset内だけで行い、Guestデータを変更しないことを確認
+- Guest A / Guest Bの商品表示を分離
+- Guest AからGuest Bの商品更新・売上入力を拒否
+- 外部から`dataset_id`相当の値を与えても対象Datasetを変更できないことを確認
+- Guest Demo第4段階完了時点で**201 passed**、Pull Request #6のGitHub Actions successを確認
+
+> Guest Demoは現在も段階的に実装中です。Dataset境界・Guest identity / session・業務route開放まではmainへ統合済みですが、体験時間表示、期限切れGuestデータの自動削除、AI利用回数制限、リセットなどは今後の段階で実装します。
 
 ### Dashboard / Gemini API
 
@@ -235,6 +279,7 @@ Webデザインでは、見た目を整えることだけでなく、**見る人
 - 認証済み`/api/ai-advice`のroute単位正常系を検証
 - 指定年月の売上だけがGeminiへ渡されることを確認
 - 前年同月データをfixtureへ追加し、月だけではなく年条件も正しく作用していることを回帰テスト化
+- Guest利用時も現在のGuest Dataset内の売上だけがAI処理へ渡されることを検証
 
 ### XSS
 
@@ -267,9 +312,18 @@ Webデザインでは、見た目を整えることだけでなく、**見る人
 
 Warning修正後
 91 passed, 0 warnings
+
+Guest Demo 第1段階
+114 passed
+
+Guest Demo 第3段階
+195 passed
+
+Guest Demo 第4段階
+201 passed
 ```
 
-第5段階では、単にテスト件数を増やすのではなく、
+pytest強化第5段階では、単にテスト件数を増やすのではなく、
 
 > **現在のGREENが、本当に重要な仕様違反を検知できるのか**
 
@@ -321,13 +375,21 @@ production code・template・model・migrationには正式変更を加えてい�
 
 Stage 5終了後に残っていたFlask-SQLAlchemyのDeprecationWarningについては、`migrations/env.py`の非推奨`db.get_engine()`を削除し、`db.engine`へ統一しました。
 
-最終結果は、
+この時点の結果は、
 
 ```text
 91 passed, 0 warnings
 ```
 
-です。
+でした。
+
+その後、Guest DemoのDataset分離・認証認可・越境防止テストを追加し、現在は、
+
+```text
+201 passed
+```
+
+まで拡充しています。
 
 ### Development Flow
 
@@ -336,6 +398,8 @@ Stage 5終了後に残っていたFlask-SQLAlchemyのDeprecationWarningについ
 - `feature/pytest-stage4`で第4段階を実施し、Pull Request #2を通して87件GREEN後にmainへMerge
 - `feature/pytest-stage5`で第5段階を実施し、Pull Request #3を通して91件GREEN後にmainへMerge
 - `fix/flask-sqlalchemy-warning`でWarningを修正し、Pull Request #4を通して91 passed・0 warningsを確認
+- `feature/guest-demo-mode`でDataset基盤とMigrationを実装し、Pull Request #5を通して114件GREEN後にmainへMerge
+- `feature/guest-demo-stage4`でGuest identity / session、Dataset境界、実業務route開放を段階的に実装し、Pull Request #6を通して201件GREEN・GitHub Actions success後にmainへMerge
 - HTML内のCSSを`static/style.css`へ分離
 - ページ専用クラスによるCSSの影響範囲制御
 - スマートフォン向けレスポンシブデザイン
@@ -362,6 +426,7 @@ Stage 5終了後に残っていたFlask-SQLAlchemyのDeprecationWarningについ
 - [「トラックドライバーが『点検ゲート』を作ってみたら、テストの落とし穴にハマった話」](https://qiita.com/tosane932/items/b9b6576c1fda3d3a76d2)
 - [「🔨47秒でXSS修正！？VS Code版Codexを『他部署から来たベテラン点検員』として使ってみた」](https://qiita.com/tosane932/items/95f998ff98c4ac2ec5d9)
 - [Flask-Migrate導入後の空DBで「テーブルが存在しない」と失敗した原因と、初期マイグレーションを修復した記録](https://qiita.com/tosane932/items/13c2ca0e17716594aa1e)
+- [Guest Demo実装の第1段階：Dataset基盤とMigration](https://qiita.com/tosane932/items/77cc200ab78761174b91)
 
 #### pytest「事故防止台帳」強化シリーズ
 
@@ -480,6 +545,7 @@ Stage 5終了後に残っていたFlask-SQLAlchemyのDeprecationWarningについ
 - PostgreSQL
 - SQLite3
 - sql.js
+- Dataset単位のデータ分離
 
 ### Authentication / Security
 
@@ -487,8 +553,12 @@ Stage 5終了後に残っていたFlask-SQLAlchemyのDeprecationWarningについ
 - Flask-Login
 - Flask-WTF / CSRFProtect
 - Werkzeug password hash verification
-- `login_required`によるアクセス制御
-- Session fingerprintによる認証設定変更検知
+- `login_required`を基盤としたアクセス制御
+- `admin_or_guest_required`によるAdmin / Guest principal検証
+- `require_current_dataset()`によるDataset単位の認可
+- Admin Session fingerprintによる認証設定変更検知
+- Guest identity / session
+- Guest A / Guest B / Admin間のデータ越境防止
 - Jinja2 autoescape
 - DOM API / `textContent` / `innerText`
 - Authlib
@@ -504,6 +574,8 @@ Stage 5終了後に残っていたFlask-SQLAlchemyのDeprecationWarningについ
 - GitHub Pull Request
 - Falsification
 - Manual Mutation Testing
+- Dataset isolation regression testing
+- 現在のpytest：201 passed
 
 ### AI / External Data
 
@@ -528,6 +600,8 @@ Stage 5終了後に残っていたFlask-SQLAlchemyのDeprecationWarningについ
 - Duolingoを利用した英語学習
 - 英語の技術ドキュメントおよびエラーメッセージの読解力を継続的に強化
 - 開発中に起きた失敗・原因・修正・再発防止策をQiitaへ記録
+- Qiita記事を英訳・再構成し、DEV Communityでも海外向けに発信
+- ZennではQiitaとは異なる切り口で、開発背景・設計判断・学びを再構成して発信
 - READMEを定期的に見直し、現在の実装内容と一致させる運用
 - [過去の学習記録を「リファクタリング」する：感情的な記述を事実ベースの技術報告へ再編した理由](https://qiita.com/tosane932/items/3d05208f519db621efef)
 
@@ -552,6 +626,7 @@ Stage 5終了後に残っていたFlask-SQLAlchemyのDeprecationWarningについ
 - 技術を導入すること自体ではなく、現場の負担を減らすことを目的にする
 - 第三者が実際に触れられる状態で公開し、改善を継続する
 - テストがGREENであることだけで安心せず、そのテストが本当に重要な故障を検出できるかまで確認する
+- 認証済みであることだけを信用せず、利用者が操作できるデータ境界まで明示的に検証する
 
 物流・飲食・販売・保育などで働く人の声を課題発見の起点とし、実際に触れられるWebアプリケーションとして公開しながら改善を続けます。
 
@@ -560,10 +635,10 @@ Stage 5終了後に残っていたFlask-SQLAlchemyのDeprecationWarningについ
 2026年末までに「現場で即戦力となるポートフォリオの完成」をマイルストーンとして設定し、以下の3つを軸に実績を積み重ねています。
 
 1. **技術の深掘り**  
-   Docker・データベース・CI/CD・クラウド・認証・セキュリティ・テスト設計など、アプリケーションの裏側まで理解し、堅牢なシステムを設計・構築できる力を身につける。
+   Docker・データベース・CI/CD・クラウド・認証・認可・セキュリティ・テスト設計など、アプリケーションの裏側まで理解し、堅牢なシステムを設計・構築できる力を身につける。
 
 2. **実績の証明**  
-   開発過程やエラー解決、UI改善、テスト設計の判断理由を、事実ベースの技術記事（Qiita）およびソースコード（GitHub）として継続的に公開する。
+   開発過程やエラー解決、UI改善、テスト設計の判断理由を、事実ベースの技術記事（Qiita・Zenn・DEV Community）およびソースコード（GitHub）として継続的に公開する。
 
 3. **現場課題からのプロダクト開発**  
    自身や家族、実際の現場で働く人の声をもとに課題を抽出し、物流・飲食・販売・保育など幅広い分野で役立つWebアプリケーションを企画・開発・公開する。
