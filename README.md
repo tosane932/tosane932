@@ -14,7 +14,7 @@ IT業界での実務経験はありませんが、2026年5月12日より、本�
 - PostgreSQL / SQLAlchemy / Alembicによるデータベース設計・変更管理
 - Docker / Docker Composeによる開発環境構築
 - pytest / GitHub Actionsによる自動テストとCI
-- pytestを**3件 → 9件 → 51件 → 69件 → 87件 → 91件 → 114件 → 169件 → 181件 → 195件 → 201件**へ段階的に拡充
+- pytestを**3件から378件**まで、実装・事故・監査結果に応じて段階的に拡充
 - 入力値検証・DB整合性・rollback・履歴保持・ダッシュボード集計・認証・CSRF・アクセス制御を回帰テスト化
 - 空DBからAlembic headまで到達できることを自動検証するMigration回帰テスト
 - `(product_id, date)`のDB一意制約追加と、隔離PostgreSQL環境でのupgrade / downgrade検証
@@ -31,12 +31,25 @@ IT業界での実務経験はありませんが、2026年5月12日より、本�
 - Guest Demo向けに`Dataset`モデルと`Product.dataset_id`を導入し、既存管理者データを安全に分離するMigrationを実装
 - Admin専用境界、Guest identity、Dataset認可を段階的に追加
 - Guest用Datasetをサーバー側で発行し、`guest:<UUID>`形式のGuest identityと結びつける仕組みを実装
-- Guest Dataset作成失敗・DB障害・不正identityではfail-closedで停止
 - Product / DailySales / Dashboard / AI / seedをDataset単位にスコープし、Admin・Guest A・Guest B間の越境を回帰テスト化
 - 外部から`dataset_id`やAdmin風Session値を差し込んでも権限昇格・対象Dataset変更ができないことを検証
-- 正規Admin / Guestだけを通す`admin_or_guest_required`を導入し、Guest Demo対象の業務画面・APIをDataset境界内で利用可能に変更
-- Guest Demo第4段階完了時点で**201 passed**、Pull Request #6のGitHub Actions成功を確認
-- 第4段階までmainへ統合後、Guest期限切れ・無操作判定・cleanup・AI利用回数制限などを扱う第5段階へ進行
+- Guest Datasetへ**無操作30分・開始から最大2時間**の有効期限を導入
+- 期限切れGuest DatasetとProduct / DailySalesを安全に削除するcleanupを実装
+- cleanupと利用者操作の競合をPostgreSQLのrow lockを用いて検証
+- Guest Dataset単位でGemini APIの利用を**合計3回まで**に制限
+- Guest Session作成にIP由来HMAC keyを用いたrate limitを導入し、生IPをDBへ保存しない設計を実装
+- PostgreSQL advisory lockを用いてGuest Dataset作成処理を直列化し、有効Guest Datasetを最大10件に制限
+- CSRF保護された`POST /guest/start`を公開し、認証情報不要でGuest Demoを開始できる入口を実装
+- Guest 1 Datasetあたりの商品数を最大30件、Product / Sales POSTを1回最大30件に制限
+- AI APIをPOST + CSRF保護へ変更し、拒否されたrequestがGeminiへ到達しないことを検証
+- GuestからGeminiへ渡す商品数・商品名・数量・promptサイズに上限を設定
+- Adminログイン失敗を**5回 / 15分**に制限し、PostgreSQL上の並行requestによるrate limitすり抜けも検証
+- Session CookieへSecure / HttpOnly / SameSite=Laxを設定
+- `X-Content-Type-Options`、`Referrer-Policy`、`Permissions-Policy`、`X-Frame-Options`、限定CSPなどのSecurity Headersを追加
+- `Strict-Transport-Security`を導入し、HSTSを回帰テスト化
+- 月替わり・年替わりで日付依存pytestが壊れた事故を、再発防止テストとして記録
+- Dashboardで売上データが存在する月を✅表示し、Dataset境界を保ったまま利用可能年月を可視化
+- 日次売上入力時に現在値を選択状態にし、既存値を削除せずそのまま上書きしやすいUIへ改善
 - feature branch / Pull Request / GitHub Actionsを通した変更確認とmainへのMerge
 - Gunicorn / Renderによる本番公開
 - Gemini APIを利用したAI機能の実装
@@ -44,7 +57,9 @@ IT業界での実務経験はありませんが、2026年5月12日より、本�
 - JavaScriptによるブラウザ完結型Webアプリケーション開発
 - VS Code版Codexを用いた、事実と推測を分けたリポジトリ全体の静的レビュー
 - Codexへ変更範囲・禁止事項・停止条件を段階ごとに指定し、小さな単位で修正・検証する運用
+- `AGENTS.md`へGit・DB・Migration・Guest Demo・テスト・本番操作に関する安全ルールを明文化
 - 開発過程・失敗・設計判断をQiita・Zenn・DEV Community・GitHubへ継続的に記録
+- 現在の`sales_data_app`全体テスト結果：**378 passed, 4 skipped**
 
 Webデザインでは、見た目を整えることだけでなく、**見る人の視線の流れ、情報の優先順位、ボタン配置、操作手順の分かりやすさ**を意識しています。
 
@@ -60,6 +75,7 @@ Webデザインでは、見た目を整えることだけでなく、**見る人
 - 色だけでなくアイコンと具体的な文言を併用する
 - 次に行う操作へ迷わず移動できる導線を作る
 - ヒューマンエラーを個人の注意力だけに頼らず、仕組みで防ぐ
+- エラー発生後の対処だけでなく、起き得る事故をテストと設計で先回りして防ぐ
 
 物流や飲食など、時間に追われる現場でも直感的に使える画面設計と、利用者が「これ、どうしたらいいですか？」と困る前に迷いの原因を取り除くシステム設計を目指しています。
 
@@ -121,8 +137,8 @@ Webデザインでは、見た目を整えることだけでなく、**見る人
 | **2026/05/12** | Pythonを中心とした本格的なシステム開発学習を開始。自動化プログラムとWebアプリケーションの設計・実装に着手 | 開始日 | - |
 | **2026/05/23** | GitHubによるソースコード管理環境を構築し、Python / Flaskを用いた初期3システムを公開。構想段階で実現性を検証し、車載ローカルサーバー案からWebアプリケーション開発へ方針転換 | 12日 | [車載ローカルサーバー構想を損切りし...](https://qiita.com/tosane932/items/37c9d2c482a6611d2f25) |
 | **2026/06/02** | Ruby on Rails 8を用いたWebアプリケーションをRenderへ本番公開。無料クラウド環境のメモリ・ファイルシステム制約を調査し、ローカルプリコンパイルと永続ディスクによる代替案を検証 | 22日 | [Render無料枠の制限を回避したRails 8のデプロイ検証](https://qiita.com/tosane932/items/58e00fc7353ef76b4a62) |
-| **2026/06/03** | Pythonで事前に外部データを取得・整形し、JSONファイルとして静的サイトへ供給する「データ出荷型」構成を実装。画面表示時の通信待ちを抑える設計を検証 | 23日 | [Python学習開始24日目の記録...](https://qiita.com/tosane932/items/a227899ee58d68020c21) |
-| **2026/06/18** | 過去のREADME・学習記録・技術記事を全面的に見直し。感情中心の記述から、現象・原因・判断・結果を区別した事実ベースの技術ドキュメントへ再構成 | 38日 | [過去の学習記録を『リファクタリング』する...](https://qiita.com/tosane932/items/3d05208f519db621efef) |
+| **2026/06/03** | Pythonで事前に外部データを取得・整形し、JSONファイルとして静的サイトへ供給する「データ出荷型」構成を実装 | 23日 | [Python学習開始24日目の記録...](https://qiita.com/tosane932/items/a227899ee58d68020c21) |
+| **2026/06/18** | 過去のREADME・学習記録・技術記事を全面的に見直し、現象・原因・判断・結果を区別した事実ベースの技術ドキュメントへ再構成 | 38日 | [過去の学習記録を『リファクタリング』する...](https://qiita.com/tosane932/items/3d05208f519db621efef) |
 | **2026/06/24** | `sales_data_app`のデータ保存先をSQLiteからPostgreSQLへ移行 | 44日 | - |
 | **2026/06/28** | `sales_data_app`のコード全体を再点検し、重複処理・不要コード・例外処理不足など9件の問題を発見・修正 | 48日 | [学習100時間のトラックドライバーが...](https://qiita.com/tosane932/items/ac18b633c8c87b9807bb) |
 | **2026/06/30** | `sales_data_app`をDocker化し、FlaskとPostgreSQLをまとめて起動できる再現可能な開発環境を構築 | 50日 | - |
@@ -136,19 +152,35 @@ Webデザインでは、見た目を整えることだけでなく、**見る人
 | **2026/07/17** | `puoppo_app`へGoogle OAuthとFlask-Loginを導入 | 67日 | - |
 | **2026/07/18** | CSSを`static/style.css`へ分離し、ページ別スコープを設定 | 68日 | [「保存」と「更新」は違う。元お好み焼き職人が店長目線でFlaskアプリの迷うUIを潰した話](https://qiita.com/tosane932/items/245152c844261e615641) |
 | **2026/07/18** | 店長目線で文言・配色・未来年表示・登録状態・画面導線を改善 | 68日 | [「保存」と「更新」は違う。元お好み焼き職人が店長目線でFlaskアプリの迷うUIを潰した話](https://qiita.com/tosane932/items/245152c844261e615641) |
-| **2026/07/19** | `sales_data_app`のリポジトリ全体を5時間総点検し、不要コード・画像資料・README・ignore設定などを整理 | 69日 | [🚛 動いているFlaskアプリを5時間総点検――コード・README・Docker・Gitを「現在の仕様」に揃える方法](https://qiita.com/tosane932/items/02de476fad8f0c1261e0) |
-| **2026/08/02** | VS Code版Codexで静的レビューを実施。18件の改善候補を抽出し、最初に動的ランキングの保存型XSSを修正 | 83日 | [🔨47秒でXSS修正！？VS Code版Codexを「他部署から来たベテラン点検員」として使ってみた](https://qiita.com/tosane932/items/95f998ff98c4ac2ec5d9) |
-| **2026/08/06** | 欠落していた初期マイグレーションを修復し、空DB構築と既存DB複製環境の両経路を検証 | 87日 | [Flask-Migrate導入後の空DBで「テーブルが存在しない」と失敗した原因と、初期マイグレーションを修復した記録](https://qiita.com/tosane932/items/13c2ca0e17716594aa1e) |
-| **2026/08/10** | pytest強化を第2段階まで実施。3件→9件→51件へ拡充し、売上POST・商品POST・DB一意制約・rollback・履歴保持・dashboard APIを回帰テスト化。AI返答表示も`innerHTML`から`innerText`へ変更 | 91日 | [pytestを「事故防止台帳」として育てる 第2段階](https://qiita.com/tosane932/items/b91261e7103df5792f7d) |
-| **2026/08/11** | pytest強化第3段階を完了。単一管理者認証、CSRF保護、業務画面・APIのアクセス制御を実装し、51件→69件へ拡充。Pull RequestとGitHub Actionsを通してmainへMerge | 92日 | [pytestを「事故防止台帳」として育てる 第3段階](https://qiita.com/tosane932/items/6d1ca5490979c8cf9d62) |
+| **2026/07/19** | `sales_data_app`のリポジトリ全体を5時間総点検し、不要コード・画像資料・README・ignore設定などを整理 | 69日 | [🚛 動いているFlaskアプリを5時間総点検...](https://qiita.com/tosane932/items/02de476fad8f0c1261e0) |
+| **2026/08/02** | VS Code版Codexで静的レビューを実施。18件の改善候補を抽出し、動的ランキングの保存型XSSを修正 | 83日 | [🔨47秒でXSS修正！？...](https://qiita.com/tosane932/items/95f998ff98c4ac2ec5d9) |
+| **2026/08/06** | 欠落していた初期マイグレーションを修復し、空DB構築と既存DB複製環境の両経路を検証 | 87日 | [Flask-Migrate導入後の空DBで...](https://qiita.com/tosane932/items/13c2ca0e17716594aa1e) |
+| **2026/08/10** | pytest強化を第2段階まで実施。3件→9件→51件へ拡充し、売上POST・商品POST・DB一意制約・rollback・履歴保持・dashboard APIを回帰テスト化 | 91日 | [pytestを「事故防止台帳」として育てる 第2段階](https://qiita.com/tosane932/items/b91261e7103df5792f7d) |
+| **2026/08/11** | pytest強化第3段階を完了。単一管理者認証、CSRF保護、業務画面・APIのアクセス制御を実装し、51件→69件へ拡充 | 92日 | [pytestを「事故防止台帳」として育てる 第3段階](https://qiita.com/tosane932/items/6d1ca5490979c8cf9d62) |
 | **2026/08/13** | pytest強化第4段階を完了。空DB Migration、不正query、Geminiエラーfallback、認証Session、改ざんCSRFを強化し、69件→87件へ拡充 | 94日 | [pytestを「事故防止台帳」として育てる 第4段階](https://qiita.com/tosane932/items/372270330e73583a227f) |
-| **2026/08/15** | pytest強化第5段階を完了。Falsificationと手動Mutation Testingで既存pytestの検出力を検証。11 Mutation中、初回SURVIVEDした5件をテスト強化後に再検証し、87件→91件へ拡充 | 96日 | [pytestを「事故防止台帳」として育てる 第5段階](https://qiita.com/tosane932/items/85fd24c7baa6fe7c76a7) |
-| **2026/08/15** | Stage 5で可視化されたFlask-SQLAlchemyのDeprecationWarningを修正。非推奨の`db.get_engine()`を`db.engine`へ統一し、最終結果を91 passed・0 warningsへ改善 | 96日 | - |
-| **2026/08/19** | Guest Demo第1段階を完了。`Dataset`モデルと`Product.dataset_id`を追加し、既存ProductをAdmin Datasetへbackfill。Expand → Migrate → Contractの段階的Migrationとデータ保全検証を実施し、pytestを114件へ拡充。Pull Request #5をmainへMerge | 100日 | [第1段階：既存AdminデータをDatasetへ移行](https://qiita.com/tosane932/items/2ccaab5c1b7e29619345) |
-| **2026/08/21** | Guest Demo第2段階①を完了。Admin専用境界、`GuestUser`、`guest:<UUID>`形式のidentity、`require_current_dataset()`を追加し、Admin / Guestの認証・認可基盤を構築。pytestは169件へ拡充 | 102日 | [第2段階①：Admin境界・Guest identity・Dataset認可](https://qiita.com/tosane932/items/77cc200ab78761174b91) |
-| **2026/08/22** | Guest Demo第2段階②を完了。Guest Datasetをサーバー側で安全に発行し、Guest identityと結びつける処理を実装。DB障害時のfail-closedや不正なDataset切替を確認し、169件→181件へ拡充。GREEN後にも安全条件を再監査 | 103日 | [第2段階②：Guest Dataset発行・181件GREEN再監査](https://qiita.com/tosane932/items/aa3b8a06029e8d5e3f25) |
-| **2026/08/23** | Guest Demo第3段階を完了。Product / DailySales / Dashboard / API / AI / seedをDataset単位にスコープし、Admin・Guest間およびGuest A・Guest B間の越境を防止。181件→195件へ拡充 | 104日 | [第3段階：Dataset越境を潰し181→195件](https://qiita.com/tosane932/items/f825aff19bff0d3d122c) |
-| **2026/08/24** | Guest Demo第4段階を完了。正規Guestを実業務routeへ通しつつDataset境界を維持。商品・売上POST、Dashboard HTML / API、AIプロンプト、Session改ざんによるAdmin昇格防止まで検証し、195件→201件へ拡充。Pull Request #6をmainへMerge | 105日 | [第4段階：正規Guestを実routeへ通し195→201件](https://qiita.com/tosane932/items/166113162b6a4d1a437e) |
+| **2026/08/15** | pytest強化第5段階を完了。Falsificationと手動Mutation Testingで既存pytestの検出力を検証。87件→91件へ拡充 | 96日 | [pytestを「事故防止台帳」として育てる 第5段階](https://qiita.com/tosane932/items/85fd24c7baa6fe7c76a7) |
+| **2026/08/15** | Flask-SQLAlchemyのDeprecationWarningを修正し、91 passed・0 warningsへ改善 | 96日 | - |
+| **2026/08/19** | Guest Demo第1段階を完了。`Dataset`と`Product.dataset_id`を追加し、既存ProductをAdmin Datasetへbackfill。pytestを114件へ拡充 | 100日 | [第1段階：既存AdminデータをDatasetへ移行](https://qiita.com/tosane932/items/2ccaab5c1b7e29619345) |
+| **2026/08/21** | Guest Demo第2段階①を完了。Admin専用境界、`GuestUser`、`guest:<UUID>` identity、`require_current_dataset()`を追加。pytest169件 | 102日 | [第2段階①：Admin境界・Guest identity・Dataset認可](https://qiita.com/tosane932/items/77cc200ab78761174b91) |
+| **2026/08/22** | Guest Demo第2段階②を完了。Guest Datasetをサーバー側で発行しGuest identityと結合。pytest181件 | 103日 | [第2段階②：Guest Dataset発行・181件GREEN再監査](https://qiita.com/tosane932/items/aa3b8a06029e8d5e3f25) |
+| **2026/08/23** | Guest Demo第3段階を完了。Product / DailySales / Dashboard / API / AI / seedをDataset単位にスコープし、181件→195件へ拡充 | 104日 | [第3段階：Dataset越境を潰し181→195件](https://qiita.com/tosane932/items/f825aff19bff0d3d122c) |
+| **2026/08/24** | Guest Demo第4段階を完了。正規Guestを実業務routeへ通しつつDataset境界を維持。195件→201件、Pull Request #6をmainへMerge | 105日 | [第4段階：正規Guestを実routeへ通し195→201件](https://qiita.com/tosane932/items/166113162b6a4d1a437e) |
+| **2026/09/02** | 9月への月替わりで固定年月のpytestがREDになった事故を修正。さらに月替わり・年替わり回帰テストを追加し203件へ拡充 | 114日 | - |
+| **2026/09/03** | Guest Demo第5段階として、無操作30分・絶対2時間の期限判定、`last_activity_at`更新、期限切れDataset cleanupを実装。222 passed | 115日 | - |
+| **2026/09/03** | Guest Dataset単位でAI advice / greeting合計3回までの利用制限を追加。DB側の条件付きUPDATEでatomicに利用権を確保。244 passed | 115日 | - |
+| **2026/09/05** | Guest Session作成rate limitを追加。IPを検証・正規化後、HMAC-SHA256済みkeyだけをDBへ保存。266 passed | 117日 | - |
+| **2026/09/05** | `AGENTS.md`を追加し、Git履歴・本番DB・Migration・Render・Gemini・pytestなどの安全運用ルールをリポジトリへ明文化 | 117日 | - |
+| **2026/09/06** | cleanup候補選定後にGuestが再活動した場合のrace conditionを発見。row lock取得後に期限を再判定する方式へ修正し、PostgreSQL実並行テストでも検証。267 passed | 118日 | - |
+| **2026/09/06** | 日次売上入力欄へフォーカスした際、既存数量を選択状態にするUIを追加。30→35のような上書き操作を容易に改善 | 118日 | - |
+| **2026/09/06** | Dashboardの月選択肢へ、現在のDatasetでDailySalesが存在する月だけ✅を表示する仕組みを追加。269 passed | 118日 | - |
+| **2026/09/07** | PostgreSQL advisory lockを用いてGuest Dataset作成を直列化し、同時に存在できる有効Guest Datasetを最大10件へ制限。291 passed | 119日 | - |
+| **2026/09/07** | `/login`へGuest Demo公開入口を追加。CSRF保護された`POST /guest/start`と利用状況表示を実装し、Guest Demoを一般公開。310 passed | 119日 | - |
+| **2026/09/08** | Guestの1 Datasetあたりの商品総数を30件へ制限し、Product / Sales POSTも1回30件までに制限。PostgreSQL並行POSTも検証。336 passed | 120日 | - |
+| **2026/09/09** | AI APIをPOST + CSRF保護へ変更。Guest promptへ商品数・文字数・数量上限を追加し、例外詳細をログへ出さないよう強化。362 passed | 121日 | - |
+| **2026/09/09** | Gemini APIの既定モデル設定を更新し、Admin / Guest双方から実APIの200応答を確認 | 121日 | - |
+| **2026/09/09** | Adminログイン失敗5回 / 15分のrate limitを追加。PostgreSQL advisory lockで並行ログインによる上限すり抜けを防止。373 passed, 4 skipped | 121日 | - |
+| **2026/09/09** | Session CookieをSecure / HttpOnly / SameSite=Laxへ強化し、Security Headers・`Cache-Control: no-store`を追加 | 121日 | - |
+| **2026/09/09** | `Strict-Transport-Security: max-age=86400`を追加し、初期HSTSを回帰テスト化。最新結果**378 passed, 4 skipped** | 121日 | - |
 
 </details>
 
@@ -163,7 +195,12 @@ Webデザインでは、見た目を整えることだけでなく、**見る人
 - **公開環境**: [ベーカリー売上管理システムを開く](https://bakery-salesdata.onrender.com/)
 - **概要**: 商品マスタ、日次売上入力、売上分析、AIによる経営アドバイスを一元化した、ベーカリー向けWebアプリケーション
 - **コンセプト**: 元お好み焼き職人としての店舗運営経験とWebデザインの知識を生かし、老若男女が迷わず使える売上管理システムを設計
-- **Guest Demo**: Dataset分離・Guest identity / session・実業務route開放までmainへ統合済み。現在は第5段階として、Guest期限切れ、無操作判定、cleanup、Guestデータだけの安全な削除、AI利用回数制限などを段階的に実装中
+- **Guest Demo**: 認証情報不要で公開中。Guestごとに専用Datasetを発行し、Admin・他Guestから分離した状態で商品登録・日次売上入力・Dashboard・Gemini APIを実際に操作可能
+- **Guest期限**: 無操作30分 / 開始から最大2時間
+- **Guest AI**: 1 DatasetにつきAI advice / greeting合計3回まで
+- **Guest商品上限**: 1 Dataset最大30商品
+- **同時Guest上限**: 有効Guest Dataset最大10件
+- **現在のテスト結果**: **378 passed, 4 skipped**
 
 ### 主な設計・実装
 
@@ -174,7 +211,7 @@ Webデザインでは、見た目を整えることだけでなく、**見る人
 - Docker / Docker Composeによる環境構築
 - Gunicorn / Renderによる本番公開
 - pytest / GitHub Actionsによる自動テスト
-- pytestを**3件から201件**まで段階的に拡充
+- pytestを**3件から378件**まで段階的に拡充
 - 空DBからAlembic headまで到達できるMigration回帰テスト
 - Flask-Loginによる単一管理者認証
 - Flask-WTFによるCSRF保護
@@ -197,13 +234,47 @@ Webデザインでは、見た目を整えることだけでなく、**見る人
 - 越境POST失敗時にDB副作用を残さない原子性の回帰テスト
 - Sessionへrole・is_admin・dataset_id相当の値を差し込んでもAdminへ昇格できないことを検証
 - 正規Admin / Guestのみを通す`admin_or_guest_required`を業務routeへ適用
+- Guest Datasetの無操作30分・絶対2時間の期限管理
+- Guest利用時の`last_activity_at`更新
+- 期限切れGuest Datasetの機会的cleanup
+- `DailySales → Product → Dataset`の明示的削除
+- cleanup失敗時のrollback
+- cleanupとGuest活動の競合をrow lock取得後の再判定で防止
+- PostgreSQL上でcleanupと利用者操作・複数cleanupの並行動作を検証
+- Guest Dataset単位のAI合計3回制限
+- DB側の条件付きUPDATEによるatomicなAI利用権確保
+- Guest Session作成rate limit
+- 生IPを保存しないHMAC-SHA256 client key
+- PostgreSQL advisory lockによるGuest作成処理の直列化
+- 有効Guest Dataset最大10件
+- CSRF保護された`POST /guest/start`
+- Guest capacity表示
+- Guest 1 Dataset最大30商品
+- Guest Product / Sales POST最大30件
+- 商品名・価格・数量・年月のサーバー側上限
+- AI APIのPOST化とCSRF保護
+- Guest AI promptの商品数・文字数・数量上限
+- Adminログイン失敗5回 / 15分のrate limit
+- PostgreSQL上の並行ログインrace condition検証
+- Session Cookie Secure / HttpOnly / SameSite=Lax
+- `X-Content-Type-Options: nosniff`
+- `Referrer-Policy: strict-origin-when-cross-origin`
+- `Permissions-Policy`
+- `X-Frame-Options: DENY`
+- 限定Content Security Policy
+- `Cache-Control: no-store`
+- `Strict-Transport-Security`
 - feature branch / Pull Request / GitHub Actionsを用いた変更確認フロー
 - VS Code版Codexによる静的レビュー
+- `AGENTS.md`によるAI開発時の安全ルール明文化
 - 保存型XSS対策
 - HTML sink混入を検知するXSS回帰テスト
 - Jinja2 autoescapeの初期表示経路を確認する回帰テスト
 - UI文言・配色・導線の改善
-- Guest Demo第4段階完了時点のテスト結果：**201 passed**
+- 日次売上入力時の既存値自動選択
+- Dashboardで売上データが存在する月を✅表示
+- 月替わり・年替わり事故の回帰テスト
+- 最新テスト結果：**378 passed, 4 skipped**
 
 <details>
 <summary><strong>🔧 sales_data_app の詳細な実装・検証内容を表示する</strong></summary>
@@ -226,6 +297,9 @@ Webデザインでは、見た目を整えることだけでなく、**見る人
 - Product / DailySalesの件数・ID、NULL / orphanの有無を検証してから`products.dataset_id`をNOT NULL化
 - Dataset → Productの1:N、外部キー、INDEX、`ON DELETE CASCADE`を追加
 - Guest Datasetが存在する状態では危険なdowngradeを拒否するMigration guardを実装
+- `guest_ai_usage_count`をDatasetへ追加し、Adminは0固定、Guestは0〜3のDB制約で保護
+- `guest_creation_rate_limits`テーブルを追加し、匿名化したclient key単位でGuest作成回数を管理
+- Product / DailySalesを壊さずGuest用schemaを段階的に追加できることをMigrationテストで検証
 
 ### Validation / Transaction
 
@@ -241,6 +315,11 @@ Webデザインでは、見た目を整えることだけでなく、**見る人
 - `/api/dashboard-data`で年月別集計・ランキング・グラフ値・inactive商品の過去履歴・全期間集計を検証
 - Guest AからGuest Bの商品IDを混ぜたPOSTを全体拒否し、一部だけ保存されないことを確認
 - Guest AからGuest Bへの売上入力を拒否し、越境失敗時にDB副作用を残さないことを確認
+- Guest Product / Sales POSTを1回最大30件に制限
+- Guest 1 Datasetの生涯Product数を最大30件に制限
+- 論理削除済み商品も上限判定へ含め、削除と再作成による上限回避を防止
+- Dataset rowをlockし、同時Product POSTでも30商品上限を超えないことをPostgreSQLで検証
+- 商品名・価格・数量・年月にサーバー側上限を設定
 
 ### Authentication / CSRF / Access Control
 
@@ -263,9 +342,18 @@ Webデザインでは、見た目を整えることだけでなく、**見る人
 - Guest Datasetをサーバー側で新規発行し、そのDataset専用のGuest identityを発行
 - Guest Dataset作成失敗時はGuestとしてログインさせない
 - `admin_or_guest_required`により、正規AdminUser / GuestUser以外の認証済みprincipalを403で拒否
-- `/`、`/input`、`/dashboard`、`/api/dashboard-data`、`/api/ai-advice`、`/api/greeting`をAdmin / Guestの両方からDataset境界内で利用可能に変更
+- `/`、`/input`、`/dashboard`、`/api/dashboard-data`、`/api/ai-advice`、`/api/greeting`をAdmin / Guestの両方からDataset境界内で利用可能
 - `require_current_dataset()`でAdminはAdmin Dataset、Guestは自身のGuest Datasetだけを解決
 - SessionへAdmin風のrole・flag・dataset_idを差し込んでもGuestからAdmin Datasetへ昇格できないことを回帰テスト化
+- `/api/ai-advice`と`/api/greeting`をPOST化しCSRF保護
+- CSRF拒否時にGemini Clientへ到達しないことを確認
+- CSRF拒否時にGuest AI利用回数も消費しない
+- Adminログイン失敗を同一clientあたり5回 / 15分に制限
+- 6回目以降はHTTP 429
+- 上限到達中は正しい資格情報でも認証処理へ進まない
+- wrong username / wrong passwordで外部レスポンスを統一
+- Guest作成rate limitとは別HMAC domain / 別counterを使用
+- PostgreSQL advisory lockにより、並行requestでログイン上限をすり抜けないことをintegration testで検証
 
 ### Guest Demo / Dataset Isolation
 
@@ -278,9 +366,34 @@ Webデザインでは、見た目を整えることだけでなく、**見る人
 - Guest A / Guest Bの商品表示を分離
 - Guest AからGuest Bの商品更新・売上入力を拒否
 - 外部から`dataset_id`相当の値を与えても対象Datasetを変更できないことを確認
-- Guest Demo第4段階完了時点で**201 passed**、Pull Request #6のGitHub Actions successを確認
-
-> Guest Demoは現在も段階的に実装中です。Dataset境界・Guest identity / session・業務route開放まではmainへ統合済みです。現在は第5段階として、Guest期限切れ、30分無操作判定、`last_activity_at`、cleanup、Guestデータだけの安全な削除、AI利用回数制限などを進めています。
+- Guest Datasetへ開始から最大2時間の絶対期限を設定
+- Guest Datasetへ無操作30分の期限を設定
+- 利用時に`last_activity_at`を更新
+- identity復元時とDataset解決時の両方で期限を確認
+- 期限切れGuest DatasetをGuest開始時にcleanup
+- cleanup対象を`kind="guest"`かつ`system_key IS NULL`へ限定
+- `DailySales → Product → Dataset`の順序で削除
+- cleanup途中のDB障害時はtransaction全体をrollback
+- cleanupの冪等性をテスト
+- cleanup候補取得後にGuestが再活動したrace conditionを再現
+- row lock取得後にDBから最新状態を再取得し、期限判定をやり直すことで誤削除を防止
+- PostgreSQLで「利用者更新が先」「cleanupが先」「cleanup同士が競合」「途中失敗」の並行ケースを検証
+- Guest AI advice / greetingをDataset単位で合計3回までに制限
+- 4回目以降は429を返しGemini APIを呼び出さない
+- Gemini APIエラー時も、既に確保した利用回数は戻さない
+- Gemini APIを呼び出さないfallbackでは利用回数を消費しない
+- Guest Session作成rate limitをDBでatomicに管理
+- `CF-Connecting-IP`を検証・正規化した後、HMAC-SHA256 keyへ変換
+- 生IPやclient情報をDBへ保存しない
+- Cookie削除や新Session作成でもGuest作成rate limitを回避できないことを確認
+- Guest作成時のcleanup → 有効Guest COUNT → INSERTをPostgreSQL advisory lockで直列化
+- 同時に存在できる有効Guest Datasetを最大10件へ制限
+- `/login`からGuest Demoを開始可能
+- `POST /guest/start`をCSRF保護
+- Guest capacityをログイン画面へ表示
+- Guest 1 Dataset最大30商品
+- Product / Sales POST最大30件
+- 現在のGuest DemoをRender上で公開
 
 ### Dashboard / Gemini API
 
@@ -291,6 +404,34 @@ Webデザインでは、見た目を整えることだけでなく、**見る人
 - 指定年月の売上だけがGeminiへ渡されることを確認
 - 前年同月データをfixtureへ追加し、月だけではなく年条件も正しく作用していることを回帰テスト化
 - Guest利用時も現在のGuest Dataset内の売上だけがAI処理へ渡されることを検証
+- AI advice / greetingをPOST化
+- Guest adviceはcurrent Dataset内で集計した上位30商品までに制限
+- Dataset絞り込み後に集計・sort・LIMITを適用
+- 商品名100文字、合計数量9,300,000個までを送信前に再検証
+- Guest promptのサイズを制限
+- Gemini例外本文・stack traceをアプリログへ直接出さない
+- DashboardでDailySalesが存在する月を✅表示
+- 月の存在判定も現在のDatasetへ限定
+- inactive商品の過去売上もDashboard上の利用可能月判定へ含める
+- 表示年月変更後に`🔍 データを抽出`する操作を画面上で明示
+
+### Security Headers / Session
+
+- 本番Session CookieをSecure化
+- HttpOnlyを明示
+- SameSite=Laxを明示
+- ローカルHTTP開発時は環境設定でSecure Cookieを切り替え
+- `X-Content-Type-Options: nosniff`
+- `Referrer-Policy: strict-origin-when-cross-origin`
+- `Permissions-Policy: camera=(), microphone=(), geolocation=()`
+- `X-Frame-Options: DENY`
+- CSPで`frame-ancestors 'none'`
+- CSPで`base-uri 'self'`
+- CSPで`object-src 'none'`
+- CSPで`form-action 'self'`
+- dynamic HTML / JSON APIへ`Cache-Control: no-store`
+- `Strict-Transport-Security: max-age=86400`
+- Security Header期待値をpytestで回帰テスト化
 
 ### XSS
 
@@ -338,7 +479,50 @@ Guest Demo 第3段階
 
 Guest Demo 第4段階
 201 passed
+
+月替わり・年替わり回帰
+203 passed
+
+Guest lifecycle / cleanup
+222 passed
+
+Guest AI利用制限
+244 passed
+
+Guest作成rate limit
+266 passed
+
+cleanup race修正
+267 passed
+
+日次売上UI改善
+268 passed
+
+Dashboard売上月表示
+269 passed
+
+有効Guest上限
+291 passed, 1 skipped
+
+Guest Demo公開入口
+310 passed, 1 skipped
+
+Guest商品・POST上限
+336 passed, 2 skipped
+
+AI公開前防御
+362 passed, 2 skipped
+
+Admin login rate limit
+373 passed, 4 skipped
+
+Security Headers / HSTS
+378 passed, 4 skipped
 ```
+
+現在の4件のskipは、通常のテスト環境で専用PostgreSQL URLが設定されていない場合に意図的にskipされるPostgreSQL integration testです。
+
+実PostgreSQLを必要とする並行処理については、使い捨て・隔離されたPostgreSQL環境でも別途検証しています。
 
 pytest強化第5段階では、単にテスト件数を増やすのではなく、
 
@@ -377,44 +561,7 @@ SURVIVEDした5件について、
 
 しています。
 
-第5段階の正式変更は、
-
-```text
-test_ai_integration.py
-test_auth.py
-test_sales.py
-test_xss_regressions.py
-```
-
-のテストコードのみです。
-
-production code・template・model・migrationには正式変更を加えていません。
-
-Stage 5終了後に残っていたFlask-SQLAlchemyのDeprecationWarningについては、`migrations/env.py`の非推奨`db.get_engine()`を削除し、`db.engine`へ統一しました。
-
-この時点の結果は、
-
-```text
-91 passed, 0 warnings
-```
-
-でした。
-
-その後、Guest DemoのDataset分離・認証認可・越境防止テストを追加し、
-
-```text
-114
-↓
-169
-↓
-181
-↓
-195
-↓
-201
-```
-
-まで段階的に拡充しています。
+その考え方はGuest Demo実装後も継続しており、cleanupのrace conditionやAdmin login rate limitの並行requestについても、実際に壊れる状態を再現してから修正・回帰テスト化しています。
 
 ### Development Flow
 
@@ -422,13 +569,29 @@ Stage 5終了後に残っていたFlask-SQLAlchemyのDeprecationWarningについ
 - Pull Request #1とGitHub Actionsを通して69件GREEN後にmainへMerge
 - `feature/pytest-stage4`で第4段階を実施し、Pull Request #2を通して87件GREEN後にmainへMerge
 - `feature/pytest-stage5`で第5段階を実施し、Pull Request #3を通して91件GREEN後にmainへMerge
-- `fix/flask-sqlalchemy-warning`でWarningを修正し、Pull Request #4を通して91 passed・0 warningsを確認
-- `feature/guest-demo-mode`でDataset基盤とMigrationを実装し、Pull Request #5を通して114件GREEN後にmainへMerge
-- Guest Demo第2段階①でAdmin専用境界・Guest identity・Dataset認可を追加し169件GREENを確認
-- Guest Demo第2段階②でGuest Dataset発行を追加し181件GREENを確認
-- Guest Demo第3段階でProduct / DailySales / Dashboard / AI / seedのDataset境界を強化し195件GREENを確認
-- `feature/guest-demo-stage4`で正規Guestを実業務routeへ開放し、Pull Request #6を通して201件GREEN・GitHub Actions success後にmainへMerge
-- 第4段階統合後、`feature/guest-demo-stage5`でGuest期限切れ・cleanup・AI利用制限などの次段階へ着手
+- `fix/flask-sqlalchemy-warning`でWarningを修正し、Pull Request #4を通して91 passed・0 warnings
+- `feature/guest-demo-mode`でDataset基盤とMigrationを実装し、Pull Request #5を通して114件GREEN
+- Guest Demo第2段階①でAdmin専用境界・Guest identity・Dataset認可を追加し169件GREEN
+- Guest Demo第2段階②でGuest Dataset発行を追加し181件GREEN
+- Guest Demo第3段階でProduct / DailySales / Dashboard / AI / seedのDataset境界を強化し195件GREEN
+- `feature/guest-demo-stage4`をPull Request #6で統合し201件GREEN
+- Pull Request #7で月替わりに壊れた日付依存テストを修正
+- Pull Request #8で月替わり・年替わり回帰テストを追加
+- Pull Request #9でGuest期限・活動時刻・cleanupを統合
+- Pull Request #10でGuest Dataset単位のAI3回制限を追加
+- Pull Request #11でGuest Session作成rate limitを追加
+- Pull Request #12で`AGENTS.md`によるリポジトリ安全ルールを追加
+- Pull Request #13でcleanupのstale candidate race conditionを修正
+- Pull Request #14で日次売上入力欄の既存値選択UIを追加
+- Pull Request #15でDashboardへ売上データ存在月の✅表示を追加
+- Pull Request #16で有効Guest Dataset最大10件とPostgreSQL advisory lockを追加
+- Pull Request #17で公開Guest Demo入口を追加
+- Pull Request #18でGuestの商品数・POST件数・入力値上限を追加
+- Pull Request #19でAI APIをPOST + CSRF化しGuest prompt上限を追加
+- Pull Request #20でGeminiモデル設定を更新
+- Pull Request #21でAdmin login rate limitと並行request対策を追加
+- Pull Request #22でSession Cookie / Security Headersを強化
+- Pull Request #23で初期HSTSを追加
 - HTML内のCSSを`static/style.css`へ分離
 - ページ専用クラスによるCSSの影響範囲制御
 - スマートフォン向けレスポンシブデザイン
@@ -443,10 +606,15 @@ Stage 5終了後に残っていたFlask-SQLAlchemyのDeprecationWarningについ
 - 「保存する」を「本日の売上個数を更新する」へ変更
 - 商品ごとに「本日の登録済み個数」を表示
 - 入力欄へデータベースの現在値を初期表示
+- 日次売上入力欄へフォーカスした際、現在値を選択状態にして上書きを容易に変更
+- DashboardでDailySalesが存在する月へ✅を表示
+- 表示期間変更後に`🔍 データを抽出`する必要があることを画面上へ明示
 - 商品ごとの余白と区切り線を追加
 - トップ・日次入力・売上分析間の画面導線を改善
 - 商品登録・日次入力・売上分析・AI・戻る操作の配色を統一
 - 色だけでなく、アイコンと具体的な文言を併用
+- Guest Demoの利用状況と利用上限を画面上で明示
+- Guest満員時はボタンをdisabled化し、実行できない状態を視覚的にも表示
 
 ### 公開記事
 
@@ -582,6 +750,8 @@ Stage 5終了後に残っていたFlask-SQLAlchemyのDeprecationWarningについ
 - SQLite3
 - sql.js
 - Dataset単位のデータ分離
+- PostgreSQL row lock / advisory lock
+- atomic UPSERT / conditional UPDATE
 
 ### Authentication / Security
 
@@ -598,6 +768,13 @@ Stage 5終了後に残っていたFlask-SQLAlchemyのDeprecationWarningについ
 - Guest Datasetのサーバー側発行
 - Guest A / Guest B / Admin間のデータ越境防止
 - fail-closedな認証・認可
+- Guest Session作成rate limit
+- Admin login rate limit
+- HMAC-SHA256によるclient key匿名化
+- Session Cookie Secure / HttpOnly / SameSite=Lax
+- Security Headers
+- Content Security Policy
+- HSTS
 - Jinja2 autoescape
 - DOM API / `textContent` / `innerText`
 - Authlib
@@ -614,7 +791,16 @@ Stage 5終了後に残っていたFlask-SQLAlchemyのDeprecationWarningについ
 - Falsification
 - Manual Mutation Testing
 - Dataset isolation regression testing
-- Guest Demo第4段階完了時点：201 passed
+- Migration regression testing
+- XSS regression testing
+- Security Header testing
+- PostgreSQL integration testing
+- PostgreSQL concurrency testing
+- cleanup race condition testing
+- rate limit concurrency testing
+- 月替わり・年替わり回帰テスト
+- `AGENTS.md`によるAI開発安全ルール
+- **現在：378 passed, 4 skipped**
 
 ### AI / External Data
 
@@ -633,6 +819,9 @@ Stage 5終了後に残っていたFlask-SQLAlchemyのDeprecationWarningについ
 - 画面導線の設計
 - 色だけに依存しない情報伝達
 - ヒューマンエラー防止を意識したUI
+- 入力済み値を再編集しやすいフォーム設計
+- 売上データ存在月の可視化
+- 利用上限・利用不可状態の明示
 
 ### 継続学習・技術記録
 
@@ -642,6 +831,8 @@ Stage 5終了後に残っていたFlask-SQLAlchemyのDeprecationWarningについ
 - Qiita記事を英訳・再構成し、DEV Communityでも海外向けに発信
 - ZennではQiitaとは異なる切り口で、開発背景・設計判断・学びを再構成して発信
 - READMEを定期的に見直し、現在の実装内容と一致させる運用
+- GREENになったテストも反証・Mutation・並行処理検証などで再評価
+- AIへ実装を任せきるのではなく、変更範囲・禁止事項・停止条件・検証方法を明示して利用
 - [過去の学習記録を「リファクタリング」する：感情的な記述を事実ベースの技術報告へ再編した理由](https://qiita.com/tosane932/items/3d05208f519db621efef)
 
 </details>
@@ -666,7 +857,11 @@ Stage 5終了後に残っていたFlask-SQLAlchemyのDeprecationWarningについ
 - 第三者が実際に触れられる状態で公開し、改善を継続する
 - テストがGREENであることだけで安心せず、そのテストが本当に重要な故障を検出できるかまで確認する
 - 認証済みであることだけを信用せず、利用者が操作できるデータ境界まで明示的に検証する
+- 単体requestだけではなく、複数requestが同時に動いた場合の競合まで考える
+- エラー処理だけではなく、失敗途中にデータや利用権がどの状態になるかまで確認する
 - 公開を急ぐより、第三者を通しても既存データを壊さない構造を先に作る
+- AIへコード生成を任せる場合も、変更範囲・禁止事項・停止条件・検証結果を人間側で管理する
+- 一度起きた事故や見つけた弱点を、pytestやドキュメントとして再利用できる技術資産へ変える
 
 物流・飲食・販売・保育などで働く人の声を課題発見の起点とし、実際に触れられるWebアプリケーションとして公開しながら改善を続けます。
 
@@ -675,7 +870,7 @@ Stage 5終了後に残っていたFlask-SQLAlchemyのDeprecationWarningについ
 2026年末までに「現場で即戦力となるポートフォリオの完成」をマイルストーンとして設定し、以下の3つを軸に実績を積み重ねています。
 
 1. **技術の深掘り**  
-   Docker・データベース・CI/CD・クラウド・認証・認可・セキュリティ・テスト設計など、アプリケーションの裏側まで理解し、堅牢なシステムを設計・構築できる力を身につける。
+   Docker・データベース・CI/CD・クラウド・認証・認可・セキュリティ・テスト設計・並行処理など、アプリケーションの裏側まで理解し、堅牢なシステムを設計・構築できる力を身につける。
 
 2. **実績の証明**  
    開発過程やエラー解決、UI改善、テスト設計の判断理由を、事実ベースの技術記事（Qiita・Zenn・DEV Community）およびソースコード（GitHub）として継続的に公開する。
