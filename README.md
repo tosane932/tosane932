@@ -14,7 +14,7 @@ IT業界での実務経験はありませんが、2026年5月12日より、本�
 - PostgreSQL / SQLAlchemy / Alembicによるデータベース設計・変更管理
 - Docker / Docker Composeによる開発環境構築
 - pytest / GitHub Actionsによる自動テストとCI
-- pytestを**3件から378件**まで、実装・事故・監査結果に応じて段階的に拡充
+- pytestを**3件から668件**まで、実装・事故・監査結果に応じて段階的に拡充
 - 入力値検証・DB整合性・rollback・履歴保持・ダッシュボード集計・認証・CSRF・アクセス制御を回帰テスト化
 - 空DBからAlembic headまで到達できることを自動検証するMigration回帰テスト
 - `(product_id, date)`のDB一意制約追加と、隔離PostgreSQL環境でのupgrade / downgrade検証
@@ -34,7 +34,7 @@ IT業界での実務経験はありませんが、2026年5月12日より、本�
 - Product / DailySales / Dashboard / AI / seedをDataset単位にスコープし、Admin・Guest A・Guest B間の越境を回帰テスト化
 - 外部から`dataset_id`やAdmin風Session値を差し込んでも権限昇格・対象Dataset変更ができないことを検証
 - Guest Datasetへ**無操作30分・開始から最大2時間**の有効期限を導入
-- 期限切れGuest DatasetとProduct / DailySalesを安全に削除するcleanupを実装
+- 期限切れGuest DatasetとProduct / DailySales / MaterialOrderItem / ShopMemoを安全に削除するcleanupを実装
 - cleanupと利用者操作の競合をPostgreSQLのrow lockを用いて検証
 - Guest Dataset単位でGemini APIの利用を**合計3回まで**に制限
 - Guest Session作成にIP由来HMAC keyを用いたrate limitを導入し、生IPをDBへ保存しない設計を実装
@@ -50,6 +50,11 @@ IT業界での実務経験はありませんが、2026年5月12日より、本�
 - 月替わり・年替わりで日付依存pytestが壊れた事故を、再発防止テストとして記録
 - Dashboardで売上データが存在する月を✅表示し、Dataset境界を保ったまま利用可能年月を可視化
 - 日次売上入力時に現在値を選択状態にし、既存値を削除せずそのまま上書きしやすいUIへ改善
+- Dataset単位の材料発注リストを実装し、100件上限・完了状態・削除・PostgreSQL並行requestを検証
+- 店舗メモに作成・編集・検索・pin・複製・autosave・ゴミ箱・復元・完全削除・URL linkifyを実装
+- スマートフォン向けに長押し・swipe・Undo・FAB・responsive editorを実装し、実機操作を改善
+- アプリ全体の固定UIをinline SVGへ統一し、ベーカリー向けブランドを**Bakery Hub**へ整理
+- GitHub Actionsで通常pytestとPostgreSQL 16 integrationを実行する二層CIを運用
 - feature branch / Pull Request / GitHub Actionsを通した変更確認とmainへのMerge
 - Gunicorn / Renderによる本番公開
 - Gemini APIを利用したAI機能の実装
@@ -59,7 +64,7 @@ IT業界での実務経験はありませんが、2026年5月12日より、本�
 - Codexへ変更範囲・禁止事項・停止条件を段階ごとに指定し、小さな単位で修正・検証する運用
 - `AGENTS.md`へGit・DB・Migration・Guest Demo・テスト・本番操作に関する安全ルールを明文化
 - 開発過程・失敗・設計判断をQiita・Zenn・DEV Community・GitHubへ継続的に記録
-- 現在の`sales_data_app`全体テスト結果：**378 passed, 4 skipped**
+- 現在の`sales_data_app`全体テスト結果：**668 passed, 16 skipped**
 
 Webデザインでは、見た目を整えることだけでなく、**見る人の視線の流れ、情報の優先順位、ボタン配置、操作手順の分かりやすさ**を意識しています。
 
@@ -180,7 +185,13 @@ Webデザインでは、見た目を整えることだけでなく、**見る人
 | **2026/09/09** | Gemini APIの既定モデル設定を更新し、Admin / Guest双方から実APIの200応答を確認 | 121日 | - |
 | **2026/09/09** | Adminログイン失敗5回 / 15分のrate limitを追加。PostgreSQL advisory lockで並行ログインによる上限すり抜けを防止。373 passed, 4 skipped | 121日 | - |
 | **2026/09/09** | Session CookieをSecure / HttpOnly / SameSite=Laxへ強化し、Security Headers・`Cache-Control: no-store`を追加 | 121日 | - |
-| **2026/09/09** | `Strict-Transport-Security: max-age=86400`を追加し、初期HSTSを回帰テスト化。最新結果**378 passed, 4 skipped** | 121日 | - |
+| **2026/09/09** | `Strict-Transport-Security: max-age=86400`を追加し、初期HSTSを回帰テスト化。**378 passed, 4 skipped** | 121日 | - |
+| **2026/09/11** | 全pytestを`tests/`配下へ整理し、テストパスを統一。**381 passed, 4 skipped** | 123日 | - |
+| **2026/09/13** | Dataset単位の材料発注リストを実装。追加・完了 / 未完了・削除・100件上限とPostgreSQL上の並行制御を追加。**478 passed** | 125日 | - |
+| **2026/09/14** | 店舗メモのデータ基盤とCRUD・検索を実装。`ShopMemo`、soft delete、Dataset分離、100件上限を追加。**583 passed, 14 skipped** | 126日 | - |
+| **2026/09/15** | 店舗メモへTrash / restore / permanent deleteと安全なURL自動リンクを追加。PostgreSQL統合テストを拡張。**590 passed, 16 skipped** | 127日 | - |
+| **2026/09/20** | 店舗メモへtitle・pin・autosave・複製・Undo・スマートフォン向けgestureを統合。**646 passed, 16 skipped** | 132日 | - |
+| **2026/09/22** | 店舗ツールのMobile UI/UX、共通SVG Navigation、カテゴリカラーを整理し、ベーカリー向けブランドを**Bakery Hub**へ統一。PR #42時点で**668 passed, 16 skipped** | 134日 | - |
 
 </details>
 
@@ -188,19 +199,21 @@ Webデザインでは、見た目を整えることだけでなく、**見る人
 
 ## ⚡ 開発実績・リポジトリ一覧
 
-### 1. [🍞 sales_data_app](https://github.com/tosane932/sales_data_app)
+### 1. [🍞 sales_data_app / Bakery Hub](https://github.com/tosane932/sales_data_app)
 
 【Python / Flask / PostgreSQL / Docker / Gemini API】
 
-- **公開環境**: [ベーカリー売上管理システムを開く](https://bakery-salesdata.onrender.com/)
-- **概要**: 商品マスタ、日次売上入力、売上分析、AIによる経営アドバイスを一元化した、ベーカリー向けWebアプリケーション
-- **コンセプト**: 元お好み焼き職人としての店舗運営経験とWebデザインの知識を生かし、老若男女が迷わず使える売上管理システムを設計
-- **Guest Demo**: 認証情報不要で公開中。Guestごとに専用Datasetを発行し、Admin・他Guestから分離した状態で商品登録・日次売上入力・Dashboard・Gemini APIを実際に操作可能
+- **公開環境**: [Bakery Hubを開く](https://bakery-salesdata.onrender.com/)
+- **概要**: 商品マスタ、日次売上入力、売上分析、Geminiによる経営アドバイスに加え、材料発注リスト・店舗メモを一元化したベーカリー向け業務支援Webアプリケーション
+- **コンセプト**: 元お好み焼き職人としての店舗運営経験とWebデザインの知識を生かし、忙しい現場でも老若男女が迷わず使える業務システムを設計
+- **Guest Demo**: 認証情報不要で公開中。Guestごとに専用Datasetを発行し、Admin・他Guestから分離した状態で商品登録・日次売上入力・Dashboard・材料発注・店舗メモ・Gemini APIを実際に操作可能
 - **Guest期限**: 無操作30分 / 開始から最大2時間
 - **Guest AI**: 1 DatasetにつきAI advice / greeting合計3回まで
 - **Guest商品上限**: 1 Dataset最大30商品
 - **同時Guest上限**: 有効Guest Dataset最大10件
-- **現在のテスト結果**: **378 passed, 4 skipped**
+- **店舗メモツール**: 材料発注・店舗メモを実装。タスクはmainでは準備中
+- **現在のテスト結果**: **668 passed, 16 skipped**
+- **CI**: GitHub Actionsで通常pytest + PostgreSQL 16 integrationの二層構成
 
 ### 主な設計・実装
 
@@ -211,7 +224,7 @@ Webデザインでは、見た目を整えることだけでなく、**見る人
 - Docker / Docker Composeによる環境構築
 - Gunicorn / Renderによる本番公開
 - pytest / GitHub Actionsによる自動テスト
-- pytestを**3件から378件**まで段階的に拡充
+- pytestを**3件から668件**まで段階的に拡充
 - 空DBからAlembic headまで到達できるMigration回帰テスト
 - Flask-Loginによる単一管理者認証
 - Flask-WTFによるCSRF保護
@@ -229,15 +242,15 @@ Webデザインでは、見た目を整えることだけでなく、**見る人
 - Guest identity / sessionの発行・復元とfail-closedな認可
 - `require_current_dataset()`による認証主体ごとのDataset解決
 - Guest Datasetのサーバー側発行
-- Product / DailySales / Dashboard / AI / seedのDatasetスコープ
-- Guest A / Guest B間の商品・売上・Dashboard・AIデータ越境防止
+- Product / DailySales / MaterialOrderItem / ShopMemo / Dashboard / AI / seedのDatasetスコープ
+- Guest A / Guest B間の商品・売上・材料発注・店舗メモ・Dashboard・AIデータ越境防止
 - 越境POST失敗時にDB副作用を残さない原子性の回帰テスト
 - Sessionへrole・is_admin・dataset_id相当の値を差し込んでもAdminへ昇格できないことを検証
 - 正規Admin / Guestのみを通す`admin_or_guest_required`を業務routeへ適用
 - Guest Datasetの無操作30分・絶対2時間の期限管理
 - Guest利用時の`last_activity_at`更新
 - 期限切れGuest Datasetの機会的cleanup
-- `DailySales → Product → Dataset`の明示的削除
+- `MaterialOrderItem / ShopMemo → DailySales → Product → Dataset`の明示的削除
 - cleanup失敗時のrollback
 - cleanupとGuest活動の競合をrow lock取得後の再判定で防止
 - PostgreSQL上でcleanupと利用者操作・複数cleanupの並行動作を検証
@@ -273,8 +286,14 @@ Webデザインでは、見た目を整えることだけでなく、**見る人
 - UI文言・配色・導線の改善
 - 日次売上入力時の既存値自動選択
 - Dashboardで売上データが存在する月を✅表示
+- 材料発注リストのCRUD・完了状態・100件上限・PostgreSQL並行制御
+- 店舗メモのCRUD・検索・pin・複製・autosave・Trash / restore / permanent delete
+- 店舗メモ本文のHTTP / HTTPS絶対URLだけを安全にlinkifyし、DBにはplain textを保存
+- スマートフォン向け長押し・swipe・Undo・FAB・responsive editor
+- Bakery Hubブランド、inline SVG、カテゴリカラーによる共通Navigation
 - 月替わり・年替わり事故の回帰テスト
-- 最新テスト結果：**378 passed, 4 skipped**
+- GitHub Actionsの通常pytest + PostgreSQL 16 integration
+- 最新テスト結果：**668 passed, 16 skipped**
 
 <details>
 <summary><strong>🔧 sales_data_app の詳細な実装・検証内容を表示する</strong></summary>
@@ -372,7 +391,7 @@ Webデザインでは、見た目を整えることだけでなく、**見る人
 - identity復元時とDataset解決時の両方で期限を確認
 - 期限切れGuest DatasetをGuest開始時にcleanup
 - cleanup対象を`kind="guest"`かつ`system_key IS NULL`へ限定
-- `DailySales → Product → Dataset`の順序で削除
+- `MaterialOrderItem / ShopMemo → DailySales → Product → Dataset`の順序で削除
 - cleanup途中のDB障害時はtransaction全体をrollback
 - cleanupの冪等性をテスト
 - cleanup候補取得後にGuestが再活動したrace conditionを再現
@@ -518,11 +537,29 @@ Admin login rate limit
 
 Security Headers / HSTS
 378 passed, 4 skipped
+
+tests/配下へ整理
+381 passed, 4 skipped
+
+材料発注リスト
+478 passed
+
+店舗メモCRUD・検索
+583 passed, 14 skipped
+
+Trash / URL linkify
+590 passed, 16 skipped
+
+店舗メモ新UI基盤
+646 passed, 16 skipped
+
+Mobile UI / Bakery Hub
+668 passed, 16 skipped
 ```
 
-現在の4件のskipは、通常のテスト環境で専用PostgreSQL URLが設定されていない場合に意図的にskipされるPostgreSQL integration testです。
+現在の16件のskipは、主に専用PostgreSQL URLが必要なintegration testです。
 
-実PostgreSQLを必要とする並行処理については、使い捨て・隔離されたPostgreSQL環境でも別途検証しています。
+GitHub Actionsでは通常pytestに加えてPostgreSQL 16のintegration jobを実行し、実DBが必要な並行処理・Migration・Dataset分離も継続して検証しています。
 
 pytest強化第5段階では、単にテスト件数を増やすのではなく、
 
@@ -561,7 +598,7 @@ SURVIVEDした5件について、
 
 しています。
 
-その考え方はGuest Demo実装後も継続しており、cleanupのrace conditionやAdmin login rate limitの並行requestについても、実際に壊れる状態を再現してから修正・回帰テスト化しています。
+その考え方はGuest Demo実装後も継続しており、cleanupのrace conditionやAdmin login rate limitに加え、材料発注・店舗メモの件数上限やDataset分離についても、実際に壊れる状態を想定してSQLite / PostgreSQLの両方で回帰テスト化しています。
 
 ### Development Flow
 
@@ -592,6 +629,13 @@ SURVIVEDした5件について、
 - Pull Request #21でAdmin login rate limitと並行request対策を追加
 - Pull Request #22でSession Cookie / Security Headersを強化
 - Pull Request #23で初期HSTSを追加
+- Pull Request #25で全testファイルを`tests/`配下へ整理
+- Pull Request #26〜#27で材料発注のデータ基盤・CRUD・PostgreSQL並行制御を追加
+- Pull Request #28で共通Navigationと店舗メモツールのapp shellを追加
+- Pull Request #29〜#32で店舗メモのDB基盤・CRUD・検索・Trash / restore / permanent delete・URL linkifyを追加
+- Pull Request #34〜#35でtitle・pin・autosave・複製・Undo・スマートフォン向けeditorを統合
+- Pull Request #37〜#41で店舗ツールのMobile UI/UX・microinteraction・SVG Navigationを改善
+- Pull Request #42で固定UIのSVG・カテゴリカラー・Bakery Hubブランドを統合し668 passed / 16 skipped
 - HTML内のCSSを`static/style.css`へ分離
 - ページ専用クラスによるCSSの影響範囲制御
 - スマートフォン向けレスポンシブデザイン
@@ -615,6 +659,11 @@ SURVIVEDした5件について、
 - 色だけでなく、アイコンと具体的な文言を併用
 - Guest Demoの利用状況と利用上限を画面上で明示
 - Guest満員時はボタンをdisabled化し、実行できない状態を視覚的にも表示
+- 材料発注・店舗メモを「店舗メモツール」として共通Navigationへ統合
+- 店舗メモをスマートフォンで長押し・swipe・Undoできる操作へ改善
+- virtual keyboard表示時も編集しやすいresponsive editorへ調整
+- 固定UIの絵文字をinline SVGへ統一し、カテゴリごとの色と操作表現を整理
+- Bakery Hubブランドへ統一し、売上管理と店舗業務ツールを一つの導線へ整理
 
 ### 公開記事
 
@@ -796,11 +845,13 @@ SURVIVEDした5件について、
 - Security Header testing
 - PostgreSQL integration testing
 - PostgreSQL concurrency testing
+- GitHub Actions PostgreSQL 16 integration
 - cleanup race condition testing
 - rate limit concurrency testing
+- 材料発注 / 店舗メモのDataset isolation・上限・rollback testing
 - 月替わり・年替わり回帰テスト
 - `AGENTS.md`によるAI開発安全ルール
-- **現在：378 passed, 4 skipped**
+- **現在：668 passed, 16 skipped**
 
 ### AI / External Data
 
@@ -822,6 +873,10 @@ SURVIVEDした5件について、
 - 入力済み値を再編集しやすいフォーム設計
 - 売上データ存在月の可視化
 - 利用上限・利用不可状態の明示
+- Mobile長押し / swipe / Undoによる操作設計
+- inline SVGとカテゴリカラーによるNavigation
+- autosaveとresponsive editor
+- Bakery Hubとして売上管理・店舗業務ツールを統合
 
 ### 継続学習・技術記録
 
