@@ -34,7 +34,7 @@ IT業界での実務経験はありませんが、2026年5月12日より、本�
 - Product / DailySales / Dashboard / AI / seedをDataset単位にスコープし、Admin・Guest A・Guest B間の越境を回帰テスト化
 - 外部から`dataset_id`やAdmin風Session値を差し込んでも権限昇格・対象Dataset変更ができないことを検証
 - Guest Datasetへ**無操作30分・開始から最大2時間**の有効期限を導入
-- 期限切れGuest DatasetとProduct / DailySales / MaterialOrderItem / ShopMemoを安全に削除するcleanupを実装
+- 期限切れGuest DatasetとProduct / DailySales / MaterialOrderItem / ShopMemo / ShopTaskを安全に削除するcleanupを実装
 - cleanupと利用者操作の競合をPostgreSQLのrow lockを用いて検証
 - Guest Dataset単位でGemini APIの利用を**合計3回まで**に制限
 - Guest Session作成にIP由来HMAC keyを用いたrate limitを導入し、生IPをDBへ保存しない設計を実装
@@ -254,7 +254,7 @@ Webデザインでは、見た目を整えることだけでなく、**見る人
 - Guest Datasetの無操作30分・絶対2時間の期限管理
 - Guest利用時の`last_activity_at`更新
 - 期限切れGuest Datasetの機会的cleanup
-- `MaterialOrderItem / ShopMemo → DailySales → Product → Dataset`の明示的削除
+- `MaterialOrderItem / ShopMemo / ShopTask → DailySales → Product → Dataset`の明示的削除
 - cleanup失敗時のrollback
 - cleanupとGuest活動の競合をrow lock取得後の再判定で防止
 - PostgreSQL上でcleanupと利用者操作・複数cleanupの並行動作を検証
@@ -397,7 +397,7 @@ Webデザインでは、見た目を整えることだけでなく、**見る人
 - identity復元時とDataset解決時の両方で期限を確認
 - 期限切れGuest DatasetをGuest開始時にcleanup
 - cleanup対象を`kind="guest"`かつ`system_key IS NULL`へ限定
-- `MaterialOrderItem / ShopMemo → DailySales → Product → Dataset`の順序で削除
+- `MaterialOrderItem / ShopMemo / ShopTask → DailySales → Product → Dataset`の順序で削除
 - cleanup途中のDB障害時はtransaction全体をrollback
 - cleanupの冪等性をテスト
 - cleanup候補取得後にGuestが再活動したrace conditionを再現
