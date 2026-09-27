@@ -52,8 +52,11 @@ IT業界での実務経験はありませんが、2026年5月12日より、本�
 - 日次売上入力時に現在値を選択状態にし、既存値を削除せずそのまま上書きしやすいUIへ改善
 - Dataset単位の材料発注リストを実装し、100件上限・完了状態・削除・PostgreSQL並行requestを検証
 - 店舗メモに作成・編集・検索・pin・複製・autosave・ゴミ箱・復元・完全削除・URL linkifyを実装
+- 店舗メモ一覧を独立カード型へ整理し、1行目を太字タイトル、本文を1行プレビューとして表示
+- ゴミ箱の復元導線・完全削除確認・削除通知の下swipe dismissを改善
 - 店舗タスクに追加・完了 / 未完了・削除・複数選択・長押し並び替えを実装
 - タスク並び替えを実カード追従 + placeholder + FLIPへ改善し、成立境界を約75%へ調整
+- Dashboardの棒グラフ周辺UIとPC / Mobileレイアウトを改善
 - スマートフォン向けに長押し・swipe・Undo・FAB・responsive editorを実装し、実機操作を改善
 - アプリ全体の固定UIをinline SVGへ統一し、ベーカリー向けブランドを**Bakery Hub**へ整理
 - GitHub Actionsで通常pytestとPostgreSQL 16 integrationを実行する二層CIを運用
@@ -196,6 +199,8 @@ Webデザインでは、見た目を整えることだけでなく、**見る人
 | **2026/09/22** | 店舗ツールのMobile UI/UX、共通SVG Navigation、カテゴリカラーを整理し、ベーカリー向けブランドを**Bakery Hub**へ統一。PR #42時点で**668 passed, 16 skipped** | 134日 | - |
 | **2026/09/25** | 店舗タスク機能を追加。追加・完了 / 未完了・削除・複数選択・並び替えを実装し、PR #44でmainへ統合 | 137日 | - |
 | **2026/09/26** | 長押し並び替えUXを実カード追従 + placeholder + FLIPへ改善。成立境界を約75%へ調整し、PR #46時点で**742 passed, 17 skipped** | 138日 | [店舗メモツール完成｜タスクの長押し・並び替えを“使いやすい動き”まで詰めた](https://qiita.com/tosane932/items/de92221331b5f6b5912b) |
+| **2026/09/27** | PR #48で店舗メモ一覧を独立カード型へ整理。1行目タイトル・1行本文プレビュー・Trash導線・削除確認・swipe dismissを改善 | 139日 | - |
+| **2026/09/27** | PR #49でDashboardの棒グラフ周辺UIとPC / Mobileレイアウトを改善。GitHub Actions Run Tests #216で通常test / PostgreSQL integrationともGreen | 139日 | - |
 
 </details>
 
@@ -215,9 +220,10 @@ Webデザインでは、見た目を整えることだけでなく、**見る人
 - **Guest AI**: 1 DatasetにつきAI advice / greeting合計3回まで
 - **Guest商品上限**: 1 Dataset最大30商品
 - **同時Guest上限**: 有効Guest Dataset最大10件
-- **店舗メモツール**: 材料発注・店舗メモ・タスクを実装。タスクはスマートフォン向け長押し並び替えに対応
+- **店舗メモツール**: 材料発注・店舗メモ・タスクを実装。メモは1行目タイトル + 1行本文プレビューの独立カード型一覧、タスクはスマートフォン向け長押し並び替えに対応
+- **Dashboard UI**: 棒グラフ周辺の表示とPC / Mobileレイアウトを改善
 - **現在のテスト結果**: **742 passed, 17 skipped**
-- **CI**: GitHub Actionsで通常pytest + PostgreSQL 16 integrationの二層構成
+- **CI**: GitHub Actionsで通常pytest + PostgreSQL 16 integrationの二層構成。PR #49のRun Tests #216もGreen
 
 ### 主な設計・実装
 
@@ -292,9 +298,12 @@ Webデザインでは、見た目を整えることだけでなく、**見る人
 - Dashboardで売上データが存在する月を✅表示
 - 材料発注リストのCRUD・完了状態・100件上限・PostgreSQL並行制御
 - 店舗メモのCRUD・検索・pin・複製・autosave・Trash / restore / permanent delete
+- 店舗メモ一覧を1行目タイトル + 1行本文プレビューの独立カード型へ整理
+- Trash復元後もTrash画面を維持し、完全削除確認と削除通知の下swipe dismissを改善
 - 店舗メモ本文のHTTP / HTTPS絶対URLだけを安全にlinkifyし、DBにはplain textを保存
 - 店舗タスクの追加・完了 / 未完了・削除・複数選択・完了済みグループ表示
 - 長押し並び替えを実カード追従 + placeholder + FLIPで実装し、成立境界を約75%へ調整
+- Dashboardの棒グラフ周辺UIとPC / Mobileレイアウトを改善
 - スマートフォン向け長押し・swipe・Undo・FAB・responsive editor
 - Bakery Hubブランド、inline SVG、カテゴリカラーによる共通Navigation
 - 月替わり・年替わり事故の回帰テスト
@@ -564,9 +573,12 @@ Mobile UI / Bakery Hub
 
 店舗タスク / 並び替えUX
 742 passed, 17 skipped
+
+店舗メモ一覧 / Dashboard棒グラフUI
+742 passed, 17 skipped
 ```
 
-現在の16件のskipは、主に専用PostgreSQL URLが必要なintegration testです。
+現在の17件のskipは、主に専用PostgreSQL URLが必要なintegration testです。
 
 GitHub Actionsでは通常pytestに加えてPostgreSQL 16のintegration jobを実行し、実DBが必要な並行処理・Migration・Dataset分離も継続して検証しています。
 
@@ -647,6 +659,8 @@ SURVIVEDした5件について、
 - Pull Request #42で固定UIのSVG・カテゴリカラー・Bakery Hubブランドを統合し668 passed / 16 skipped
 - Pull Request #44で店舗タスク機能を追加
 - Pull Request #45〜#46で長押し並び替えUXを調整し、実カード追従・placeholder・FLIP・約75%の成立境界へ改善して742 passed / 17 skipped
+- Pull Request #48で店舗メモ一覧を独立カード型へ整理し、1行目タイトル・1行本文プレビュー・Trash導線・削除確認・swipe dismissを改善
+- Pull Request #49でDashboardの棒グラフ周辺UIとPC / Mobileレイアウトを改善
 - HTML内のCSSを`static/style.css`へ分離
 - ページ専用クラスによるCSSの影響範囲制御
 - スマートフォン向けレスポンシブデザイン
