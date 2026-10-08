@@ -12,17 +12,26 @@ IT業界での実務経験はありませんが、大型・中型トラックド
 
 **[Tosane Works](https://github.com/tosane932/tosane-works)** は、代表作品を分野別にまとめたポートフォリオリポジトリです。
 
-- **[🥐 Bakery Hub — Store](https://github.com/tosane932/tosane-works/tree/main/store/bakery-hub)**: 売上分析から材料発注・店舗メモ・タスクまで扱う、ベーカリー向け業務支援Webアプリ（[Live Demo](https://bakery-salesdata.onrender.com/)）
+- **[🥐 Bakery Hub — Store](https://github.com/tosane932/tosane-works/tree/main/store/bakery-hub)**: 標準18種のテンプレート・商品履歴Catalog・売上分析・材料発注・店舗メモ・タスクを扱う、ベーカリー向け業務支援Webアプリ（[Live Demo](https://bakery-salesdata.onrender.com/) / [公開システム概要](https://bakery-salesdata.onrender.com/system-overview)）
 - **[🕊 Puoppo — Information](https://github.com/tosane932/tosane-works/tree/main/information/puoppo)**: 公式RSSの記事を収集し、Gemini APIで要約・分析する情報収集Webアプリ（[Live Demo](https://puoppo.onrender.com/)）
 - **[🚛 Driver Personality Test — Logistics](https://github.com/tosane932/tosane-works/tree/main/logistics/driver-personality-test)**: 物流現場の状況判断をもとに、安全運転の傾向を可視化する全50問の診断アプリ（[Live Demo](https://tosane932.github.io/tosane-works/logistics/driver-personality-test/)）
 
 作品のスクリーンショット、技術構成、機能、設計判断は、Tosane Works内の各作品READMEへ集約しています。
 
+## 🆕 最近の開発・検証（2026年10月）
+
+- **商品管理の改善**：標準18商品テンプレート、今月 / 過去の履歴Catalog、Admin専用の商品カタログ申請（GitHub PR方式）を実装。
+- **学び直せるアプリ**：Bakery Hubに公開「システム概要」を追加。Python / Flask / DB / JavaScript / pytestの役割、処理フロー、理解度チェック、トラブル逆引きを実装。
+- **pytestの検知力を再監査**：CodexとCosmic Rayを使って、重複を除く**1,286件のMutation**を検証。**KILLED 1,190 / SURVIVED 68 / ERROR 27 / EQUIVALENT 1**（TIMEOUT 0）。未解決候補も記録しています。
+- **成果をmainへ反映**：[PR #81](https://github.com/tosane932/tosane-works/pull/81)で正式pytestだけを移植。出荷前の全pytestは**991 passed / 18 skipped / 0 failed / 9 warnings**。
+
+詳しい経緯は、[Tosane Worksの開発・検証記事一覧](https://github.com/tosane932/tosane-works)と[Qiita：1,286件のMutation監査・完結編](https://qiita.com/tosane932/items/52dbc54dc2de3748bb72)にまとめています。
+
 ## 🧰 Tech
 
 - **Backend / Database**: Python, Flask, SQLAlchemy, Alembic, PostgreSQL, SQLite
-- **Test / Delivery**: pytest, GitHub Actions, Docker, Gunicorn, Render
-- **Frontend / API / Auth**: JavaScript, HTML, CSS, Gemini API, Flask-Login, Flask-WTF, Google OAuth
+- **Test / Delivery**: pytest, Mutation Testing（Cosmic Ray）, GitHub Actions, Docker, Gunicorn, Render
+- **Frontend / API / Auth**: JavaScript, HTML, CSS, Gemini API, Flask-Login, Flask-WTF, Google OAuth（Puoppoでは既定で無効）
 - **Other**: Ruby on Rails 8, Git / GitHub
 
 ## 🎯 Development Philosophy
@@ -32,7 +41,7 @@ IT業界での実務経験はありませんが、大型・中型トラックド
 - 曖昧な文言を避け、現在の状態と次の操作を画面へ表示する
 - 色だけに頼らず、アイコンと具体的な言葉を組み合わせる
 - ヒューマンエラーを注意力だけに任せず、UI・入力検証・権限分離で防ぐ
-- pytestとCIを段階的に拡充し、DB migrationやセキュリティを含めて回帰確認する
+- pytestとCIを段階的に拡充し、DB migrationやセキュリティの回帰確認に加えて、Mutation Testingでテストの検知力を検証する
 - AIには作業範囲・禁止事項・停止条件を伝え、叩き台や調査に活用する。差分・影響範囲・テスト結果は人間が確認し、提案を無批判に採用しない
 - 忙しい現場でも迷わず使えるかを実機で確かめ、実際に触れられる成果物として公開する
 
@@ -85,6 +94,10 @@ IT業界での実務経験はありませんが、大型・中型トラックド
 - **2026/09/13〜09/26** — 材料発注・店舗メモ・タスクを追加し、スマートフォンの長押し・並び替えUXまで改善
 - **2026/09/28** — 代表3作品をTosane Worksへ統合し、分野別に見られるポートフォリオへ再構成
 - **2026/09/30** — Tosane WorksにWeb Portfolioへの導線を追加。Bakery Hubのログイン画面から3分野の作品へアクセスできる入口を整備
+- **2026/10/05** — Bakery Hubに公開「システム概要」を追加・拡充。処理フロー、理解度チェック、トラブル逆引きを実装
+- **2026/10/06〜10/07** — 標準18種の商品テンプレート、商品履歴Catalog、Admin専用商品申請を実装（PR #79 / #80）
+- **2026/10/03〜10/07** — Codex / Cosmic Rayで1,286件のMutationを再監査し、強化した正式pytestをmainへ反映（PR #81）
+- **2026/10/08** — 開発・再監査の記録をQiita3記事として整理し、Tosane Works / Bakery HubのREADMEも最新版に更新
 
 詳しい変更履歴と設計判断は、[Tosane Works](https://github.com/tosane932/tosane-works)および[Qiita](https://qiita.com/tosane932)で公開しています。
 
