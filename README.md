@@ -4,7 +4,7 @@
 
 # 🛠️ 現場経験を、使われるWebアプリケーションへ
 
-IT業界での実務経験はありませんが、大型・中型トラックドライバーとして働きながら、2026年5月12日からPython / Flaskを中心にWebアプリケーション開発を学んでいます。AIも開発支援として活用しています。
+IT業界での実務経験はありませんが、大型・中型トラックドライバーとして働きながら、2026年5月12日からPython / Flaskを中心にWebアプリケーション開発を学んでいます。AIを設計・調査・実装・検証の支援に使い、GitHub上の差分・テスト・実機で結果を確認しながら開発しています。
 
 物流・飲食・販売の現場経験と、Webデザインで学んだ視線誘導・配色・情報設計を生かし、**利用者が迷わないUI、業務改善、ヒューマンエラー防止**につながる仕組みを考えています。実装して終わりではなく、第三者が実際に触れられる状態まで公開し、テストと実機確認を重ねることを大切にしています。
 
@@ -12,7 +12,7 @@ IT業界での実務経験はありませんが、大型・中型トラックド
 
 **[Tosane Works](https://github.com/tosane932/tosane-works)** は、代表作品を分野別にまとめたポートフォリオリポジトリです。
 
-- **[🥐 Bakery Hub — Store](https://github.com/tosane932/tosane-works/tree/main/store/bakery-hub)**: 標準18種のテンプレート・商品履歴Catalog・売上分析・材料発注・店舗メモ・タスクを扱う、ベーカリー向け業務支援Webアプリ（[Live Demo](https://bakery-salesdata.onrender.com/) / [公開システム概要](https://bakery-salesdata.onrender.com/system-overview)）
+- **[🥐 Bakery Hub — Store](https://github.com/tosane932/tosane-works/tree/main/store/bakery-hub)**: 商品管理・売上分析・仕込み・スタッフ／シフト・店舗業務を扱うベーカリー向けWebアプリ。写真タッチ式レジv3.0は正式運用へ向けて開発・検証中（本番公開前）（[Live Demo](https://bakery-salesdata.onrender.com/) / [公開システム概要](https://bakery-salesdata.onrender.com/system-overview)）
 - **[🕊 Puoppo — Information](https://github.com/tosane932/tosane-works/tree/main/information/puoppo)**: 公式RSSの記事を収集し、Gemini APIで要約・分析する情報収集Webアプリ（[Live Demo](https://puoppo.onrender.com/)）
 - **[🚛 Driver Personality Test — Logistics](https://github.com/tosane932/tosane-works/tree/main/logistics/driver-personality-test)**: 物流現場の状況判断をもとに、安全運転の傾向を可視化する全50問の診断アプリ（[Live Demo](https://tosane932.github.io/tosane-works/logistics/driver-personality-test/)）
 
@@ -20,12 +20,13 @@ IT業界での実務経験はありませんが、大型・中型トラックド
 
 ## 🆕 最近の開発・検証（2026年10月）
 
-- **商品管理の改善**：標準18商品テンプレート、今月 / 過去の履歴Catalog、Admin専用の商品カタログ申請（GitHub PR方式）を実装。
-- **学び直せるアプリ**：Bakery Hubに公開「システム概要」を追加。Python / Flask / DB / JavaScript / pytestの役割、処理フロー、理解度チェック、トラブル逆引きを実装。
+- **店舗業務の拡張**：標準18商品テンプレートと履歴Catalogに加え、ホーム・スケジュール・スタッフ／シフト管理・3ステップの仕込み管理・天気と売上の記録を整備。
+- **レジv3.0の段階開発**：PR #107〜#118でレジ商品、写真タッチ会計、端末の未同期記録と保存状況確認、旧新売上の排他集計、切替前監査などを実装。**正式レジは本番未公開**で、旧日次入力を継続。
+- **学び直せるアプリ**：Bakery Hubの公開「システム概要」に、実コードとpytestをつなぐ解説、理解度チェック、トラブル逆引きを実装。
 - **pytestの検知力を再監査**：CodexとCosmic Rayを使って、重複を除く**1,286件のMutation**を検証。**KILLED 1,190 / SURVIVED 68 / ERROR 27 / EQUIVALENT 1**（TIMEOUT 0）。未解決候補も記録しています。
 - **成果をmainへ反映**：[PR #81](https://github.com/tosane932/tosane-works/pull/81)で正式pytestだけを移植。出荷前の全pytestは**991 passed / 18 skipped / 0 failed / 9 warnings**。
 
-詳しい経緯は、[Tosane Worksの開発・検証記事一覧](https://github.com/tosane932/tosane-works)と[Qiita：1,286件のMutation監査・完結編](https://qiita.com/tosane932/items/52dbc54dc2de3748bb72)にまとめています。
+開発の最新状況は[Bakery HubのREADME](https://github.com/tosane932/tosane-works/blob/main/store/bakery-hub/README.md)、検証の詳細は[Qiita：1,286件のMutation監査・完結編](https://qiita.com/tosane932/items/52dbc54dc2de3748bb72)にまとめています。
 
 ## 🧰 Tech
 
@@ -71,7 +72,7 @@ IT業界での実務経験はありませんが、大型・中型トラックド
 開発中に起きたエラー、原因、修正結果、再発防止策を、事実と推測を分けて記録しています。
 
 - [Qiita：開発記録・エラー解決・検証結果](https://qiita.com/tosane932)
-- [Zenn](https://zenn.dev/tosane932)
+- [Zenn：開発の考え方・設計判断を伝える読み物](https://zenn.dev/tosane932)
 - [DEV Community：英語での技術記事](https://dev.to/tosane932)
 
 ## 📅 Development History
@@ -97,7 +98,9 @@ IT業界での実務経験はありませんが、大型・中型トラックド
 - **2026/10/05** — Bakery Hubに公開「システム概要」を追加・拡充。処理フロー、理解度チェック、トラブル逆引きを実装
 - **2026/10/06〜10/07** — 標準18種の商品テンプレート、商品履歴Catalog、Admin専用商品申請を実装（PR #79 / #80）
 - **2026/10/03〜10/07** — Codex / Cosmic Rayで1,286件のMutationを再監査し、強化した正式pytestをmainへ反映（PR #81）
-- **2026/10/08** — 開発・再監査の記録をQiita3記事として整理し、Tosane Works / Bakery HubのREADMEも最新版に更新
+- **2026/10/08** — 開発・再監査の記録をQiita3記事として整理し、ポートフォリオのREADMEを更新
+- **2026/10/10〜10/16** — Bakery Hubにスタッフ／シフト・仕込み管理・天気記録などの現場機能を追加・改善
+- **2026/10/15〜10/16** — Bakery Hub v3.0の写真タッチレジ、商品管理、未同期会計対策、切替前監査を段階実装（PR #107〜#118。本番切替は未実施）
 
 詳しい変更履歴と設計判断は、[Tosane Works](https://github.com/tosane932/tosane-works)および[Qiita](https://qiita.com/tosane932)で公開しています。
 
