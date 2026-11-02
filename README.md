@@ -12,27 +12,29 @@ IT業界での実務経験はありませんが、大型・中型トラックド
 
 **[Tosane Works](https://github.com/tosane932/tosane-works)** は、代表作品を分野別にまとめたポートフォリオリポジトリです。
 
-- **[🥐 Bakery Hub — Store](https://github.com/tosane932/tosane-works/tree/main/store/bakery-hub)**: 商品管理・売上分析・仕込み・スタッフ／シフト・店舗業務を扱うベーカリー向けWebアプリ。写真タッチ式レジv3.0は正式運用へ向けて開発・検証中（本番公開前）（[Live Demo](https://bakery-salesdata.onrender.com/) / [公開システム概要](https://bakery-salesdata.onrender.com/system-overview)）
+- **[🥐 Bakery Hub — Store](https://github.com/tosane932/tosane-works/tree/main/store/bakery-hub)**: 商品・レジ会計・売上分析・スタッフ／シフト・仕込み・廃棄ロスを扱う店舗運営Webアプリ。v3.2 Guestの販売・返金・分析・店舗業務フローはコード実装・CI検証済み、**本番では未公開**。Admin正式レジも切替前です（[公開アプリ](https://bakery-salesdata.onrender.com/) / [システム概要](https://bakery-salesdata.onrender.com/system-overview)）。
 - **[🕊 Puoppo — Information](https://github.com/tosane932/tosane-works/tree/main/information/puoppo)**: 公式RSSの記事を収集し、Gemini APIで要約・分析する情報収集Webアプリ（[Live Demo](https://puoppo.onrender.com/)）
 - **[🚛 Driver Personality Test — Logistics](https://github.com/tosane932/tosane-works/tree/main/logistics/driver-personality-test)**: 物流現場の状況判断をもとに、安全運転の傾向を可視化する全50問の診断アプリ（[Live Demo](https://tosane932.github.io/tosane-works/logistics/driver-personality-test/)）
 
 作品のスクリーンショット、技術構成、機能、設計判断は、Tosane Works内の各作品READMEへ集約しています。
 
-## 🆕 最近の開発・検証（2026年10月）
+## 🆕 最近の開発・検証（2026年10月〜11月2日）
 
-- **店舗業務の拡張**：標準18商品テンプレートと履歴Catalogに加え、ホーム・スケジュール・スタッフ／シフト管理・3ステップの仕込み管理・天気と売上の記録を整備。
-- **レジv3.0の段階開発**：PR #107〜#118でレジ商品、写真タッチ会計、端末の未同期記録と保存状況確認、旧新売上の排他集計、切替前監査などを実装。**正式レジは本番未公開**で、旧日次入力を継続。
-- **学び直せるアプリ**：Bakery Hubの公開「システム概要」に、実コードとpytestをつなぐ解説、理解度チェック、トラブル逆引きを実装。
-- **pytestの検知力を再監査**：CodexとCosmic Rayを使って、重複を除く**1,286件のMutation**を検証。**KILLED 1,190 / SURVIVED 68 / ERROR 27 / EQUIVALENT 1**（TIMEOUT 0）。未解決候補も記録しています。
-- **成果をmainへ反映**：[PR #81](https://github.com/tosane932/tosane-works/pull/81)で正式pytestだけを移植。出荷前の全pytestは**991 passed / 18 skipped / 0 failed / 9 warnings**。
+- **店舗運営の整備**：ホーム、商品・写真管理、スタッフ／シフト、3ステップ仕込み、製造実績・廃棄ロスの記録を実装。ホームカードの押しやすさ、当日／週間天気、BakeryNewsの表示を改善。
+- **写真タッチ式レジとPWA**：スマホは2列の商品一覧、横長タブレットは商品だけ横スクロール。Bakery Hub全体をインストール可能なPWAに対応し、レジの未同期会計は端末内キューと再送確認で保護。**Admin正式レジは本番切替前（NO-GO）**。
+- **v3.2 Guest体験の開発**：PR [#153](https://github.com/tosane932/tosane-works/pull/153)〜[#159](https://github.com/tosane932/tosane-works/pull/159)で、Guestの商品登録・写真編集、会計保存・返金、日／週／月／年の売上分析、スタッフ／シフト、レシピ・製造予定を既存画面で扱えるようにしました。認可・Dataset分離・期限・上限を維持。**コードはmainにマージ済みですがGuest本番公開は未実施**。
+- **認証・データ保護の検証**：Adminログアウト後のセッション失効を追加し、隔離PostgreSQLで異常系・rollback・競合を検証。通常起動時はDBのrevisionを確認し、自動migration・デモデータ投入を行わない構成へ整理。
+- **テストと公開準備**：PR #159のGitHub Actionsでは **pytest 1,545 passed / 68 skipped、JavaScript 61 passed、Chromium E2E 78 passed**。PostgreSQL統合検証も成功。これは開発コードの検証結果であり、本番公開・全実機合格ではありません。2026年11月2日にはG580で本番DB暗号化取得・隔離復元・整合性検査を実施しました。
 
-開発の最新状況は[Bakery HubのREADME](https://github.com/tosane932/tosane-works/blob/main/store/bakery-hub/README.md)、検証の詳細は[Qiita：1,286件のMutation監査・完結編](https://qiita.com/tosane932/items/52dbc54dc2de3748bb72)にまとめています。
+公開URLは既存運用版です。最新コードの公開は別工程で、Guest機能の有効化とAdmin正式レジ切替は独立して判断します。詳細は[Bakery Hub README](https://github.com/tosane932/tosane-works/blob/main/store/bakery-hub/README.md)と[Guest公開準備記録](https://github.com/tosane932/tosane-works/blob/main/store/bakery-hub/docs/v3.2-guest-launch-readiness.md)を参照してください。
+
+なお、2026年10月初旬にはCodexとCosmic Rayで重複を除く1,286件のMutation監査を実施しました（KILLED 1,190 / SURVIVED 68 / ERROR 27 / EQUIVALENT 1）。[技術記事](https://qiita.com/tosane932/items/52dbc54dc2de3748bb72)に当時の結果を残しています。
 
 ## 🧰 Tech
 
 - **Backend / Database**: Python, Flask, SQLAlchemy, Alembic, PostgreSQL, SQLite
-- **Test / Delivery**: pytest, Mutation Testing（Cosmic Ray）, GitHub Actions, Docker, Gunicorn, Render
-- **Frontend / API / Auth**: JavaScript, HTML, CSS, Gemini API, Flask-Login, Flask-WTF, Google OAuth（Puoppoでは既定で無効）
+- **Test / Delivery**: pytest, PostgreSQL統合テスト, Playwright / Chromium E2E, Mutation Testing（Cosmic Ray）, GitHub Actions, Docker, Gunicorn, Render
+- **Frontend / API / Auth**: JavaScript, HTML, CSS, PWA, Gemini API, Flask-Login, Flask-WTF, Google OAuth（Puoppo）
 - **Other**: Ruby on Rails 8, Git / GitHub
 
 ## 🎯 Development Philosophy
@@ -48,7 +50,7 @@ IT業界での実務経験はありませんが、大型・中型トラックド
 
 ## 🚚 Background
 
-- **大型・中型トラックドライバー（現役）**: 8年以上の物流経験を、安全確認・危険予知・誤操作防止の設計へ反映
+- **大型・中型トラックドライバー（現役）**: 物流ドライバー歴8年。安全確認・危険予知・誤操作防止の視点を設計へ反映
 - **百貨店催事**: 広島風お好み焼きの調理・実演販売、材料発注、売上管理、スタッフ採用・管理を経験
 - **自動販売機補充**: 売上データをもとに、巡回ルート・積載量・商品構成・販促施策を設計
 - **Webデザイン**: 視線誘導、配色、情報の優先順位をUI改善へ活用
@@ -101,6 +103,10 @@ IT業界での実務経験はありませんが、大型・中型トラックド
 - **2026/10/08** — 開発・再監査の記録をQiita3記事として整理し、ポートフォリオのREADMEを更新
 - **2026/10/10〜10/16** — Bakery Hubにスタッフ／シフト・仕込み管理・天気記録などの現場機能を追加・改善
 - **2026/10/15〜10/16** — Bakery Hub v3.0の写真タッチレジ、商品管理、未同期会計対策、切替前監査を段階実装（PR #107〜#118。本番切替は未実施）
+- **2026/10/18〜10/21** — レジのスマホ／タブレット表示、Bakery Hub全体のPWA、ホーム・週間天気・BakeryNewsを改善
+- **2026/10/23〜10/30** — 製造実績・廃棄ロス記録、Adminセッションの失効管理と本番復旧を実施。正式レジはNO-GOを維持
+- **2026/10/30〜11/01** — v3.2 Guestの商品管理→レジ会計→売上分析→スタッフ・シフト→仕込みを開発し、CI・隔離PostgreSQL・Chromiumで検証。公開は未実施（PR #153〜#160）
+- **2026/11/02** — G580でPostgreSQL 18.6の暗号化バックアップ、独立DBへの実復元、参照整合性・制約検査を実施
 
 詳しい変更履歴と設計判断は、[Tosane Works](https://github.com/tosane932/tosane-works)および[Qiita](https://qiita.com/tosane932)で公開しています。
 
